@@ -1,0 +1,143 @@
+{
+  "project_info": {
+    "project_number": "989688927883",
+    "project_id": "parentcontrol-9a079",
+    "storage_bucket": "parentcontrol-9a079.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:989688927883:android:23e427c5e6d307ad55e68e",
+        "android_client_info": {
+          "package_name": "com.example.target"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0kAQLy3d1GRIG3Ie66BtSf25zu_nfKmQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:989688927883:android:58eccab645bdc7d355e68e",
+        "android_client_info": {
+          "package_name": "com.mycompany.aeskey"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0kAQLy3d1GRIG3Ie66BtSf25zu_nfKmQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:989688927883:android:1621ba0e70edd7af55e68e",
+        "android_client_info": {
+          "package_name": "com.mycompany.aeskeywithrotation"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0kAQLy3d1GRIG3Ie66BtSf25zu_nfKmQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:989688927883:android:4c6e952d4a3bb1c355e68e",
+        "android_client_info": {
+          "package_name": "com.mycompany.ecdhwithkeyrotation"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0kAQLy3d1GRIG3Ie66BtSf25zu_nfKmQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:989688927883:android:2f8ccc7eba48f15155e68e",
+        "android_client_info": {
+          "package_name": "com.mycompany.geotest"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0kAQLy3d1GRIG3Ie66BtSf25zu_nfKmQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:989688927883:android:186d0501e1b9619955e68e",
+        "android_client_info": {
+          "package_name": "com.mycompany.qrcode"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0kAQLy3d1GRIG3Ie66BtSf25zu_nfKmQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:989688927883:android:81a5d2f41dbda87b55e68e",
+        "android_client_info": {
+          "package_name": "com.mycompany.testpilot"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0kAQLy3d1GRIG3Ie66BtSf25zu_nfKmQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
