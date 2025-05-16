@@ -10,6 +10,7 @@ import '../modules/whatsapp_screen.dart';
 import '../modules/installed_apps_screen.dart';
 import '../modules/blocked_apps_screen.dart';
 import '../modules/stealth_mode_screen.dart';
+import '../modules/dashboard.dart'; // <-- NEW
 import 'dart:async';
 import '../../apis/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -116,22 +117,24 @@ class _DashboardScreenState extends State<DashboardScreen>
   Widget _getScreenByIndex(int index) {
     switch (index) {
       case 0:
-        return LocationScreen(username: username!);
+        return DashboardPage(username: username!); // NEW DASHBOARD PAGE
       case 1:
-        return GeofencingScreen(username: username!);
+        return LocationScreen(username: username!);
       case 2:
-        return SmsScreen(username: username!);
+        return GeofencingScreen(username: username!);
       case 3:
-        return CallScreen(username: username!);
+        return SmsScreen(username: username!);
       case 4:
-        return KeyloggerScreen(username: username!);
+        return CallScreen(username: username!);
       case 5:
-        return WhatsAppScreen(username: username!);
+        return KeyloggerScreen(username: username!);
       case 6:
-        return InstalledAppsScreen(username: username!);
+        return WhatsAppScreen(username: username!);
       case 7:
-        return BlockedAppsScreen(username: username!);
+        return InstalledAppsScreen(username: username!);
       case 8:
+        return BlockedAppsScreen(username: username!);
+      case 9:
         return StealthModeScreen(username: username!);
       default:
         return const Center(child: Text("Unknown module"));
@@ -169,6 +172,8 @@ class _DashboardScreenState extends State<DashboardScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = widget.isDarkMode;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final isLargeScreen = constraints.maxWidth >= 800;
@@ -180,9 +185,13 @@ class _DashboardScreenState extends State<DashboardScreen>
         }
 
         return Scaffold(
+          backgroundColor: isDark ? const Color(0xFF121212) : null,
           appBar: isLargeScreen
               ? null
               : AppBar(
+                  backgroundColor:
+                      isDark ? const Color(0xFF1F1F1F) : Colors.white,
+                  foregroundColor: isDark ? Colors.white : Colors.black,
                   leading: Builder(
                     builder: (context) => IconButton(
                       icon: const Icon(Icons.menu),
@@ -236,7 +245,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                   child: SideBar(
                     selectedIndex: selectedIndex,
                     onItemSelected: (index) {
-                      Navigator.pop(context); // close drawer
+                      Navigator.pop(context);
                       onSelect(index);
                     },
                     username: username!,
@@ -265,7 +274,9 @@ class _DashboardScreenState extends State<DashboardScreen>
                           vertical: 16,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.deepPurple.shade50,
+                          color: isDark
+                              ? const Color(0xFF1F1F1F)
+                              : Colors.deepPurple.shade50,
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.1),
@@ -281,12 +292,12 @@ class _DashboardScreenState extends State<DashboardScreen>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Parent Radar",
+                                  "Parental Radar",
                                   style: Theme.of(context)
                                       .textTheme
                                       .headlineSmall
                                       ?.copyWith(
-                                        color: const Color(0xFF4B39EF),
+                                        color: const Color.fromARGB(255, 0, 0, 0),
                                         fontWeight: FontWeight.bold,
                                       ),
                                 ),
@@ -297,8 +308,10 @@ class _DashboardScreenState extends State<DashboardScreen>
                                     const SizedBox(width: 12),
                                     Text(
                                       "User ID: $username",
-                                      style: const TextStyle(
-                                        color: Colors.deepPurple,
+                                      style: TextStyle(
+                                        color: isDark
+                                            ? Colors.white70
+                                            : const Color.fromARGB(255, 0, 0, 0),
                                         fontSize: 14,
                                       ),
                                     ),
@@ -313,25 +326,30 @@ class _DashboardScreenState extends State<DashboardScreen>
                                   tooltip: 'Notifications',
                                   onPressed: () => Navigator.pushNamed(
                                       context, '/notifications'),
+                                  color: isDark ? Colors.white : null,
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.settings),
                                   tooltip: 'Settings',
                                   onPressed: () =>
                                       Navigator.pushNamed(context, '/settings'),
+                                  color: isDark ? Colors.white : null,
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.edit),
                                   tooltip: 'Edit Device',
                                   onPressed: () =>
                                       Navigator.pushNamed(context, '/add-device'),
+                                  color: isDark ? Colors.white : null,
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(right: 8),
                                   child: Text(
                                     username!,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
+                                      color:
+                                          isDark ? Colors.white : Colors.black,
                                     ),
                                   ),
                                 ),

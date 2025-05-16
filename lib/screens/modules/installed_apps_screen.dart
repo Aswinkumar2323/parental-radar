@@ -49,7 +49,7 @@ class _InstalledAppsScreenState extends State<InstalledAppsScreen> {
     _searchNewController.addListener(_filterNewApps);
   }
 
- Future<List<dynamic>> _fetchInstalledAppsData() async {
+  Future<List<dynamic>> _fetchInstalledAppsData() async {
     final apidata = await fetchModuleData(
       module: 'iapp',
       userId: widget.username,
@@ -174,39 +174,42 @@ class _InstalledAppsScreenState extends State<InstalledAppsScreen> {
             ? const Center(child: CircularProgressIndicator(color: Colors.white))
             : Padding(
                 padding: const EdgeInsets.only(
-                    top: kToolbarHeight + 24, left: 16, right: 16, bottom: 16),
+                    top: kToolbarHeight + 12, left: 16, right: 16, bottom: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                  Container(
-  alignment: Alignment.centerLeft,
-  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-  child: Container(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-    decoration: BoxDecoration(
-      color: isDark ? Colors.grey.shade800 : Colors.white,
-      borderRadius: BorderRadius.circular(16),
-      boxShadow: [
-        if (!isDark)
-          const BoxShadow(
-            color: Colors.black12,
-            blurRadius: 6,
-            offset: Offset(0, 2),
-          ),
-      ],
-    ),
-    child: Text(
-      'Total Installed Apps: ${installedApps.length}',
-      style: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.bold,
-        color: isDark ? Colors.white70 : Colors.black87,
-      ),
-    ),
-  ),
-),
-
-                    const SizedBox(height: 16),
+                    // Total Installed Apps
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.grey.shade800 : Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            if (!isDark)
+                              const BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 6,
+                                offset: Offset(0, 2),
+                              ),
+                          ],
+                        ),
+                        child: Text(
+                          'Total Installed Apps: ${installedApps.length}',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: isDark
+                                ? const Color.fromARGB(255, 255, 255, 255)
+                                : Colors.black87,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    // App lists
                     Expanded(
                       child: Row(
                         children: [
@@ -234,7 +237,7 @@ class _InstalledAppsScreenState extends State<InstalledAppsScreen> {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: 6),
                                   TextField(
                                     controller: _searchAllController,
                                     style: TextStyle(
@@ -260,7 +263,7 @@ class _InstalledAppsScreenState extends State<InstalledAppsScreen> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: 4),
                                   Expanded(
                                     child: Scrollbar(
                                       child: ListView.builder(
@@ -302,8 +305,7 @@ class _InstalledAppsScreenState extends State<InstalledAppsScreen> {
                                 children: [
                                   Row(
                                     children: [
-                                      Icon(Icons.fiber_new,
-                                          color: iconColor),
+                                      Icon(Icons.fiber_new, color: iconColor),
                                       const SizedBox(width: 8),
                                       const Text(
                                         'Newly Installed Apps',
@@ -313,7 +315,7 @@ class _InstalledAppsScreenState extends State<InstalledAppsScreen> {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: 6),
                                   TextField(
                                     controller: _searchNewController,
                                     style: TextStyle(
@@ -339,7 +341,7 @@ class _InstalledAppsScreenState extends State<InstalledAppsScreen> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: 4),
                                   Text(
                                     'Count: ${newApps.length}',
                                     style: TextStyle(
@@ -347,7 +349,7 @@ class _InstalledAppsScreenState extends State<InstalledAppsScreen> {
                                             ? Colors.white70
                                             : Colors.black54),
                                   ),
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: 4),
                                   Expanded(
                                     child: Scrollbar(
                                       child: ListView.builder(

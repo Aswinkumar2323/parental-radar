@@ -79,6 +79,7 @@ class _StealthModeScreenState extends State<StealthModeScreen> {
     final enabledColor = Colors.blueAccent;
     final disabledColor = const Color.fromARGB(255, 255, 64, 64);
     final boxColor = isDark ? Colors.grey.shade900 : Colors.white;
+    final containerBg = isDark ? Colors.grey.shade800 : Colors.grey.shade200;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -130,9 +131,9 @@ class _StealthModeScreenState extends State<StealthModeScreen> {
                 colors: isDark
                     ? [Colors.black, Colors.black, Colors.black]
                     : [
-                        Color(0xFF0090FF),
-                        Color(0xFF15D6A6),
-                        Color(0xFF123A5B),
+                        const Color(0xFF0090FF),
+                        const Color(0xFF15D6A6),
+                        const Color(0xFF123A5B),
                       ],
               ),
             ),
@@ -141,15 +142,13 @@ class _StealthModeScreenState extends State<StealthModeScreen> {
                     child: CircularProgressIndicator(color: Colors.white),
                   )
                 : SingleChildScrollView(
-                    padding:
-                        const EdgeInsets.fromLTRB(16, kToolbarHeight + 40, 16, 24),
+                    padding: const EdgeInsets.fromLTRB(16, kToolbarHeight + 40, 16, 24),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         const SizedBox(height: 24),
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 16, horizontal: 20),
+                          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                           decoration: BoxDecoration(
                             color: boxColor.withOpacity(0.9),
                             borderRadius: BorderRadius.circular(16),
@@ -159,7 +158,7 @@ class _StealthModeScreenState extends State<StealthModeScreen> {
                                     BoxShadow(
                                       color: Colors.black12,
                                       blurRadius: 8,
-                                      offset: Offset(0, 4),
+                                      offset: const Offset(0, 4),
                                     ),
                                   ],
                           ),
@@ -169,78 +168,100 @@ class _StealthModeScreenState extends State<StealthModeScreen> {
                               Text(
                                 "Enable Stealth",
                                 style: TextStyle(
-                                    color: isDark
-                                        ? Colors.white
-                                        : Colors.black87,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500),
+                                  color: isDark ? Colors.white : Colors.black87,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                               Switch(
                                 value: isStealthEnabled,
                                 onChanged: (value) => _confirmToggle(value),
                                 activeColor: enabledColor,
                                 inactiveTrackColor: disabledColor.withOpacity(0.6),
-                                inactiveThumbColor: disabledColor,
+                                inactiveThumbColor: Colors.white, // Always white thumb
+                                activeThumbImage: null,
+                                inactiveThumbImage: null,
                               ),
                             ],
                           ),
                         ),
                         const SizedBox(height: 50),
 
-                        // Stealth Icon with white circular background
+                        // New Rounded Container wrapping all
                         Container(
-                          width: 160,
-                          height: 160,
+                          padding: const EdgeInsets.all(24),
                           decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: boxColor,
+                            color: containerBg,
+                            borderRadius: BorderRadius.circular(24),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black26,
-                                blurRadius: 12,
-                                offset: Offset(0, 8),
+                                blurRadius: 10,
+                                offset: const Offset(0, 6),
                               ),
                             ],
                           ),
-                          child: Center(
-                            child: Icon(
-                              isStealthEnabled
-                                  ? Icons.lock_outline_rounded
-                                  : Icons.visibility_off,
-                              size: 80,
-                              color: isStealthEnabled
-                                  ? enabledColor
-                                  : disabledColor,
-                            ),
+                          child: Column(
+                            children: [
+                              // Icon with circular background
+                              Container(
+                                width: 140,
+                                height: 140,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: boxColor,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 12,
+                                      offset: const Offset(0, 8),
+                                    ),
+                                  ],
+                                ),
+                                child: Center(
+                                  child: Icon(
+                                    isStealthEnabled
+                                        ? Icons.lock_outline_rounded
+                                        : Icons.visibility_off,
+                                    size: 70,
+                                    color: isStealthEnabled
+                                        ? enabledColor
+                                        : disabledColor,
+                                  ),
+                                ),
+                              ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.2),
+
+                              const SizedBox(height: 24),
+
+                              // Stealth Mode status text
+                              Text(
+                                isStealthEnabled
+                                    ? "Stealth Mode is ON"
+                                    : "Stealth Mode is OFF",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: isStealthEnabled
+                                      ? enabledColor
+                                      : disabledColor,
+                                ),
+                              ).animate().fadeIn(duration: 300.ms),
+
+                              const SizedBox(height: 12),
+
+                              // Target App status
+                              Text(
+                                "Target App: ${isStealthEnabled ? "Active" : "Inactive"}",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: isStealthEnabled
+                                      ? enabledColor
+                                      : disabledColor,
+                                ),
+                              ).animate().fadeIn(duration: 300.ms),
+                            ],
                           ),
-                        ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.2),
-
-                        const SizedBox(height: 32),
-
-                        Text(
-                          isStealthEnabled
-                              ? "Stealth Mode is ON"
-                              : "Stealth Mode is OFF",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: isStealthEnabled
-                                ? enabledColor
-                                : disabledColor,
-                          ),
-                        ).animate().fadeIn(duration: 300.ms),
-
-                        const SizedBox(height: 12),
-
-                        Text(
-                          "Target App: ${isStealthEnabled ? "Active" : "Inactive"}",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: isStealthEnabled
-                                ? enabledColor
-                                : disabledColor,
-                          ),
-                        ).animate().fadeIn(duration: 300.ms),
+                        ),
                       ],
                     ),
                   ),

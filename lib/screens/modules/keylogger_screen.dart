@@ -85,14 +85,14 @@ class _KeyloggerScreenState extends State<KeyloggerScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        color: isDark ? Colors.grey.shade900 : Colors.white,
+        color: const Color(0xFFF0F0F0),
         boxShadow: [
           if (!isDark) BoxShadow(color: Colors.black26, blurRadius: 6),
         ],
       ),
       child: Row(
         children: [
-          Icon(icon, size: 36, color: isDark ? Colors.white : Colors.black),
+          Icon(icon, size: 36, color: Colors.black87),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -100,16 +100,14 @@ class _KeyloggerScreenState extends State<KeyloggerScreen> {
               children: [
                 Text(title,
                     style: TextStyle(
-                      color: isDark ? Colors.white : Colors.black,
+                      color: Colors.black87,
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     )),
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: TextStyle(
-                    color: isDark ? Colors.white60 : Colors.black54,
-                  ),
+                  style: TextStyle(color: Colors.black54),
                 ),
               ],
             ),
@@ -129,47 +127,41 @@ class _KeyloggerScreenState extends State<KeyloggerScreen> {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-appBar: AppBar(
-  automaticallyImplyLeading: false,
-  backgroundColor: Colors.transparent,
-  elevation: 0,
-  title: Container(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-    decoration: BoxDecoration(
-      color: Theme.of(context).brightness == Brightness.dark
-          ? Colors.grey.shade900
-          : Colors.white,
-      borderRadius: BorderRadius.circular(20),
-      boxShadow: Theme.of(context).brightness == Brightness.dark
-          ? null
-          : [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 4,
-                offset: Offset(0, 2),
-              ),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 255, 255, 255),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              if (!isDark)
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 4,
+                  offset: Offset(0, 2),
+                ),
             ],
-    ),
-    child: Text(
-      'Keylogger',
-      style: TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        color: Theme.of(context).brightness == Brightness.dark
-            ? Colors.white
-            : Colors.black,
+          ),
+          child: Text(
+            'Keylogger',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: refresh,
+            color: Colors.white,
+          ),
+        ],
       ),
-    ),
-  ),
-  actions: [
-    IconButton(
-      icon: const Icon(Icons.refresh),
-      onPressed: refresh, // Ensure you define the `refresh` method
-      color: Colors.white, // Optional: ensures it's visible on background
-    ),
-  ],
-),
-
       body: Container(
         decoration: BoxDecoration(
           gradient: isDark
@@ -238,33 +230,27 @@ appBar: AppBar(
                     padding: const EdgeInsets.all(12),
                     margin: const EdgeInsets.symmetric(vertical: 5),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.grey[900] : Colors.white,
+                      color: const Color(0xFFF0F0F0),
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
-                        if (!isDark) BoxShadow(color: Colors.black26, blurRadius: 5)
+                        if (!isDark)
+                          BoxShadow(color: Colors.black26, blurRadius: 5)
                       ],
                     ),
                     child: Row(
                       children: [
-                        Text(
+                        const Text(
                           "Select App:",
-                          style: TextStyle(
-                            color: isDark ? Colors.white : Colors.black,
-                          ),
+                          style: TextStyle(color: Colors.black87),
                         ),
                         const SizedBox(width: 12),
                         DropdownButton<String>(
-                          dropdownColor: isDark ? Colors.grey[900] : Colors.white,
-                          style: TextStyle(
-                            color: isDark ? Colors.white : Colors.black,
-                          ),
+                          dropdownColor: const Color(0xFFF0F0F0),
+                          style: const TextStyle(color: Colors.black87),
                           value: selectedApp.isEmpty ? null : selectedApp,
-                          hint: Text(
+                          hint: const Text(
                             "All Apps",
-                            style: TextStyle(
-                              color:
-                                  isDark ? Colors.white70 : Colors.black54,
-                            ),
+                            style: TextStyle(color: Colors.black54),
                           ),
                           items: groupedData.keys
                               .map((app) => DropdownMenuItem<String>(
@@ -292,7 +278,7 @@ appBar: AppBar(
                       padding: const EdgeInsets.all(8),
                       margin: const EdgeInsets.only(bottom: 12),
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.grey[900] : Colors.white,
+                        color: const Color(0xFFF0F0F0),
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           if (!isDark)
@@ -308,8 +294,8 @@ appBar: AppBar(
                               const SizedBox(width: 10),
                               Text(
                                 entry.key,
-                                style: TextStyle(
-                                  color: isDark ? Colors.white : Colors.black,
+                                style: const TextStyle(
+                                  color: Colors.black87,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -320,17 +306,11 @@ appBar: AppBar(
                             return ListTile(
                               contentPadding:
                                   const EdgeInsets.symmetric(horizontal: 4),
-                              leading: Icon(
-                                Icons.keyboard,
-                                color: isDark ? Colors.white : Colors.black,
-                              ),
+                              leading: const Icon(Icons.keyboard,
+                                  color: Colors.black87),
                               title: Text(
                                 msg,
-                                style: TextStyle(
-                                  color: isDark
-                                      ? Colors.white70
-                                      : Colors.black87,
-                                ),
+                                style: const TextStyle(color: Colors.black87),
                               ),
                             )
                                 .animate()
@@ -350,8 +330,8 @@ appBar: AppBar(
       floatingActionButton: FloatingActionButton(
         onPressed: refresh,
         backgroundColor: isDark ? Colors.grey[850] : Colors.white,
-        child: Icon(Icons.refresh,
-            color: isDark ? Colors.white : Colors.black),
+        child:
+            Icon(Icons.refresh, color: isDark ? Colors.white : Colors.black),
       ),
     );
   }

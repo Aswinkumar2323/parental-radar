@@ -231,7 +231,7 @@ appBar: AppBar(
           text: TextSpan(
             text: '$count ',
             style: TextStyle(
-              fontSize: 22,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black,
             ),
@@ -239,7 +239,7 @@ appBar: AppBar(
               TextSpan(
                 text: 'msg${count == 1 ? '' : 's'}',
                 style: TextStyle(
-                  fontSize: 13,
+                  fontSize: 18,
                   color: isDark ? Colors.white70 : Colors.black54,
                 ),
               ),
