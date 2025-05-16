@@ -34,6 +34,8 @@ class _LoginScreenState extends State<LoginScreen> {
       final onboardingStep = doc.data()?['onboardingStep'];
 
       if (onboardingStep == 'profile-complete') {
+        Navigator.pushReplacementNamed(context, '/policy');
+      } else if (onboardingStep == 'policy-complete') {
         Navigator.pushReplacementNamed(context, '/apk-download');
       } else if (onboardingStep == 'download-complete') {
         Navigator.pushReplacementNamed(context, '/add-device');

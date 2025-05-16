@@ -92,7 +92,7 @@ class _ParentDetailsFormState extends State<ParentDetailsForm> {
         _gender = null;
       });
 
-      Navigator.pushNamed(context, '/apk-download');
+      Navigator.pushNamed(context, '/policy');
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Error: ${e.toString()}")),

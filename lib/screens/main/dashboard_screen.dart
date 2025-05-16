@@ -10,7 +10,7 @@ import '../modules/whatsapp_screen.dart';
 import '../modules/installed_apps_screen.dart';
 import '../modules/blocked_apps_screen.dart';
 import '../modules/stealth_mode_screen.dart';
-import '../modules/dashboard.dart'; // <-- NEW
+import '../modules/dashboard.dart';
 import 'dart:async';
 import '../../apis/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -117,7 +117,10 @@ class _DashboardScreenState extends State<DashboardScreen>
   Widget _getScreenByIndex(int index) {
     switch (index) {
       case 0:
-        return DashboardPage(username: username!); // NEW DASHBOARD PAGE
+        return DashboardPage(
+          username: username!,
+          onJumpToIndex: onSelect, // Pass the callback
+        );
       case 1:
         return LocationScreen(username: username!);
       case 2:
@@ -201,16 +204,20 @@ class _DashboardScreenState extends State<DashboardScreen>
                   title: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Parent Radar',
+                      Text(
+                        'Parental Radar',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.black,
                         ),
                       ),
                       Text(
                         "User ID: $username",
-                        style: const TextStyle(fontSize: 12),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isDark ? Colors.white70 : Colors.black54,
+                        ),
                       ),
                     ],
                   ),
@@ -276,7 +283,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                         decoration: BoxDecoration(
                           color: isDark
                               ? const Color(0xFF1F1F1F)
-                              : Colors.deepPurple.shade50,
+                              : const Color.fromARGB(255, 254, 254, 254),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.1),
@@ -297,7 +304,9 @@ class _DashboardScreenState extends State<DashboardScreen>
                                       .textTheme
                                       .headlineSmall
                                       ?.copyWith(
-                                        color: const Color.fromARGB(255, 0, 0, 0),
+                                        color: isDark
+                                            ? Colors.white
+                                            : Colors.black,
                                         fontWeight: FontWeight.bold,
                                       ),
                                 ),
@@ -311,7 +320,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                                       style: TextStyle(
                                         color: isDark
                                             ? Colors.white70
-                                            : const Color.fromARGB(255, 0, 0, 0),
+                                            : Colors.black,
                                         fontSize: 14,
                                       ),
                                     ),

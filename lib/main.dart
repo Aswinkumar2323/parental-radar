@@ -13,7 +13,7 @@ import './screens/main/device_selection_screen.dart';
 import './screens/main/settings_screen.dart';
 import './screens/main/notification_screen.dart';
 import './screens/main/dashboard_screen.dart';
-import './screens/main/UAT_Warning_Screen.dart';
+import './ffscreen/policy.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -62,6 +62,7 @@ class _MyAppState extends State<MyApp> {
         '/parent-form': (context) => const ParentDetailsForm(),
         '/verify-email': (context) => const EmailVerificationScreen(),
         '/apk-download': (context) => const TargetAppDownloadPage(),
+        '/policy': (context) => const AgreementScreen(),
         '/add-device':
             (context) => DeviceSelectionScreen(
               isDarkMode: _themeMode == ThemeMode.dark,

@@ -60,6 +60,8 @@ dependencies:
   google_maps_flutter: ^2.5.0
   geolocator: ^11.0.0
   location: ^7.0.0
+  lucide_icons: ^0.257.0
+  flutter_markdown: ^0.7.7+1
 
 
 dev_dependencies:
@@ -78,6 +80,8 @@ flutter:
     - family: Righteous
       fonts:
         - asset: assets/Fonts/Righteous-Regular.ttf
+        - asset: assets/Fonts/NexaLight.otf
+        - asset: assets/Fonts/NexaBold.otf
 
 flutter_launcher_icons:
   image_path: "assets/icon/app_icon.png"
