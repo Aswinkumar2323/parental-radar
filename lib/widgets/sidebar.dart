@@ -94,7 +94,7 @@ class _SideBarState extends State<SideBar> {
                   Text(
                     'Parental Radar',
                     style: TextStyle(
-                      fontFamily: 'NexaBold',
+                      fontFamily: 'Righteous',
                       fontSize: 18,
                       color: textColor,
                     ),

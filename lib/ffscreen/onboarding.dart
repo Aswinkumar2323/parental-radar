@@ -109,13 +109,25 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                     position: _logoOffset,
                     child: FadeTransition(
                       opacity: _logoOpacity,
-                      child: Image.asset(
-                        'assets/icon/app_icon.png',
-                        width: 200, // You can adjust size as needed
-                        height: 200,
-                        fit:
-                            BoxFit
-                                .contain, // or BoxFit.cover if you want it to fill the space
+                      child: Container(
+                        width: 150,
+                        height: 150,
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Image.asset(
+                          'assets/icon/app_icon.png',
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     ),
                   ),
@@ -127,6 +139,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         Text(
                           'Welcome!',
                           style: TextStyle(
+                            fontFamily: 'Righteous',
                             fontSize: 30,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -139,6 +152,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                             'Thanks for joining! Access or create your account below, and get started on your journey!',
                             textAlign: TextAlign.center,
                             style: TextStyle(
+                              fontFamily: 'Righteous',
                               fontSize: 16,
                               color: Colors.white70,
                             ),
@@ -152,51 +166,50 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                     position: _buttonOffset,
                     child: FadeTransition(
                       opacity: _buttonOpacity,
-                      child:
-                          isWide
-                              ? Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  _buildPrimaryButton(
-                                    context,
-                                    "Get Started",
-                                    onPressed: () {
-                                      Navigator.pushNamed(
-                                        context,
-                                        '/parent-auth',
-                                      );
-                                    },
-                                  ),
-                                  const SizedBox(width: 20),
-                                  _buildSecondaryButton(
-                                    "My Account",
-                                    onPressed: () {
-                                      Navigator.pushNamed(context, '/login');
-                                    },
-                                  ),
-                                ],
-                              )
-                              : Column(
-                                children: [
-                                  _buildPrimaryButton(
-                                    context,
-                                    "Get Started",
-                                    onPressed: () {
-                                      Navigator.pushNamed(
-                                        context,
-                                        '/parent-auth',
-                                      );
-                                    },
-                                  ),
-                                  const SizedBox(height: 16),
-                                  _buildSecondaryButton(
-                                    "My Account",
-                                    onPressed: () {
-                                      Navigator.pushNamed(context, '/login');
-                                    },
-                                  ),
-                                ],
-                              ),
+                      child: isWide
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                _buildPrimaryButton(
+                                  context,
+                                  "Get Started",
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/parent-auth',
+                                    );
+                                  },
+                                ),
+                                const SizedBox(width: 20),
+                                _buildSecondaryButton(
+                                  "My Account",
+                                  onPressed: () {
+                                    Navigator.pushNamed(context, '/login');
+                                  },
+                                ),
+                              ],
+                            )
+                          : Column(
+                              children: [
+                                _buildPrimaryButton(
+                                  context,
+                                  "Get Started",
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/parent-auth',
+                                    );
+                                  },
+                                ),
+                                const SizedBox(height: 16),
+                                _buildSecondaryButton(
+                                  "My Account",
+                                  onPressed: () {
+                                    Navigator.pushNamed(context, '/login');
+                                  },
+                                ),
+                              ],
+                            ),
                     ),
                   ),
                   const SizedBox(height: 60),
@@ -227,20 +240,20 @@ class _WelcomeScreenState extends State<WelcomeScreen>
           ),
         ),
         child: ShaderMask(
-          shaderCallback:
-              (bounds) => const LinearGradient(
-                colors: [
-                  Color(0xFF0090ff),
-                  Color(0xFF15D6A6),
-                  Color(0xFF00F0FF),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
+          shaderCallback: (bounds) => const LinearGradient(
+            colors: [
+              Color(0xFF0090ff),
+              Color(0xFF15D6A6),
+              Color(0xFF00F0FF),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
           blendMode: BlendMode.srcIn,
           child: Text(
             text,
             style: const TextStyle(
+              fontFamily: 'Righteous',
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: Colors.white, // masked by shader
@@ -267,6 +280,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
         child: Text(
           text,
           style: const TextStyle(
+            fontFamily: 'Righteous',
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: Colors.white,

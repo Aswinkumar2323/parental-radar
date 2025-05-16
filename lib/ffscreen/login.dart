@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -30,7 +29,8 @@ class _LoginScreenState extends State<LoginScreen> {
       final uid = userCredential.user?.uid;
       if (uid == null) throw Exception('Login failed');
 
-      final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final doc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
       final onboardingStep = doc.data()?['onboardingStep'];
 
       if (onboardingStep == 'profile-complete') {
@@ -51,7 +51,8 @@ class _LoginScreenState extends State<LoginScreen> {
       } else if (e.code == 'wrong-password') {
         message = 'Incorrect password.';
       }
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An unexpected error occurred')),
@@ -89,43 +90,66 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 10),
                   const Text(
                     'ParentalRadar',
-                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: TextStyle(
+                      fontFamily: 'Righteous',
+                      fontSize: 28,
+                      color: Colors.white,
+                    ),
                   ),
                   const Text(
                     'KEEPING THEM SAFE, CONNECTED, AND GROWING',
-                    style: TextStyle(fontSize: 12, color: Colors.white70),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white70,
+                      fontFamily: 'Righteous',
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: 40),
               Center(
                 child: Container(
-                  width: isMobile ? screenWidth * 0.9 : 400,
-                  padding: const EdgeInsets.all(24),
+                  width: isMobile ? screenWidth * 0.85 : 360,
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
-                    boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 4))],
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 10,
+                          offset: Offset(0, 4))
+                    ],
                   ),
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const Text(
                         'Welcome Back',
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Righteous',
+                        ),
                       ),
                       const SizedBox(height: 8),
                       const Text(
                         'Fill out the information below in order to access your account.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.grey),
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontFamily: 'Righteous',
+                        ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 20),
                       TextFormField(
                         controller: _emailController,
+                        style: const TextStyle(fontFamily: 'Righteous'),
                         decoration: InputDecoration(
                           hintText: 'Email',
+                          hintStyle: const TextStyle(fontFamily: 'Righteous'),
                           filled: true,
                           fillColor: Colors.grey[100],
                           border: OutlineInputBorder(
@@ -138,12 +162,17 @@ class _LoginScreenState extends State<LoginScreen> {
                       TextFormField(
                         controller: _passwordController,
                         obscureText: !_isPasswordVisible,
+                        style: const TextStyle(fontFamily: 'Righteous'),
                         decoration: InputDecoration(
                           hintText: 'Password',
+                          hintStyle: const TextStyle(fontFamily: 'Righteous'),
                           suffixIcon: IconButton(
-                            icon: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off),
+                            icon: Icon(_isPasswordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off),
                             onPressed: () {
-                              setState(() => _isPasswordVisible = !_isPasswordVisible);
+                              setState(() =>
+                                  _isPasswordVisible = !_isPasswordVisible);
                             },
                           ),
                           filled: true,
@@ -158,7 +187,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       ElevatedButton(
                         onPressed: _isLoading ? null : _handleLogin,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(223, 126, 188, 239),
+                          backgroundColor:
+                              const Color.fromARGB(223, 126, 188, 239),
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -171,16 +201,26 @@ class _LoginScreenState extends State<LoginScreen> {
                               )
                             : const Text(
                                 'Sign In',
-                                style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'Righteous',
+                                ),
                               ),
                       ),
                       const SizedBox(height: 16),
-                      const Text('Or sign in with', textAlign: TextAlign.center),
+                      const Text(
+                        'Or sign in with',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontFamily: 'Righteous'),
+                      ),
                       const SizedBox(height: 12),
                       OutlinedButton.icon(
-                        onPressed: () {}, // Google Sign-in can go here
+                        onPressed: () {},
                         icon: const Icon(Icons.g_mobiledata),
-                        label: const Text('Continue with Google'),
+                        label: const Text(
+                          'Continue with Google',
+                          style: TextStyle(fontFamily: 'Righteous'),
+                        ),
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           side: const BorderSide(color: Colors.white),
@@ -190,14 +230,20 @@ class _LoginScreenState extends State<LoginScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text("Don't have an account? "),
+                          const Text(
+                            "Don't have an account? ",
+                            style: TextStyle(fontFamily: 'Righteous'),
+                          ),
                           GestureDetector(
                             onTap: () {
                               Navigator.pushNamed(context, '/parent-auth');
                             },
                             child: const Text(
                               'Sign Up here',
-                              style: TextStyle(color: Colors.blue),
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontFamily: 'Righteous',
+                              ),
                             ),
                           ),
                         ],

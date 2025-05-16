@@ -1,5 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import '../../widgets/sidebar.dart';
 import '../modules/location_screen.dart';
 import '../modules/geofencing_screen.dart';
@@ -11,10 +16,9 @@ import '../modules/installed_apps_screen.dart';
 import '../modules/blocked_apps_screen.dart';
 import '../modules/stealth_mode_screen.dart';
 import '../modules/dashboard.dart';
-import 'dart:async';
+import '/screens/feedbackforms/feedback1.dart';
+import '/screens/feedbackforms/feedback2.dart';
 import '../../apis/get.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class DashboardScreen extends StatefulWidget {
   final bool isDarkMode;
@@ -38,6 +42,8 @@ class _DashboardScreenState extends State<DashboardScreen>
   bool isLoading = true;
   String? username;
   late Timer _statusRefreshTimer;
+  bool feedback1Done = false;
+  bool feedback2Done = false;
 
   @override
   void initState() {
@@ -59,11 +65,85 @@ class _DashboardScreenState extends State<DashboardScreen>
     if (snapshot.docs.isNotEmpty) {
       setState(() {
         username = snapshot.docs.first.id;
-        _currentScreen = _getScreenByIndex(selectedIndex);
       });
-      _fetchDeviceStatus();
-      _startStatusRefreshTimer();
+      await _checkFeedbackStatus(uid);
     }
+  }
+
+Future<void> _checkFeedbackStatus(String uid) async {
+  final feedbackDoc = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(uid)
+      .collection('feedback')
+      .doc('status')
+      .get();
+
+  feedback1Done = feedbackDoc.data()?['feedback1'] == true;
+  feedback2Done = feedbackDoc.data()?['feedback2'] == true;
+
+  if (!feedback1Done) {
+    setState(() {
+      _currentScreen = Stack(
+        children: [
+          Container(
+            color: widget.isDarkMode ? Colors.black : Colors.white,
+          ),
+          Feedback1(
+            onComplete: (int selectedFeedback) async {
+              await FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(uid)
+                  .collection('feedback')
+                  .doc('status')
+                  .set({
+                    'feedback1': true,
+                    'feedback1_value': selectedFeedback,
+                  }, SetOptions(merge: true));
+              setState(() => feedback1Done = true);
+              _checkFeedbackStatus(uid);
+            },
+          ),
+        ],
+      );
+    });
+  } else if (!feedback2Done) {
+    setState(() {
+      _currentScreen = Stack(
+        children: [
+          Container(
+            color: widget.isDarkMode ? Colors.black : Colors.white,
+          ),
+          Feedback2(
+            onComplete: (int selectedFeedback) async {
+              await FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(uid)
+                  .collection('feedback')
+                  .doc('status')
+                  .set({
+                    'feedback2': true,
+                    'feedback2_value': selectedFeedback,
+                  }, SetOptions(merge: true));
+              setState(() => feedback2Done = true);
+              _initializeDashboard();
+            },
+          ),
+        ],
+      );
+    });
+  } else {
+    _initializeDashboard();
+  }
+}
+
+
+
+  void _initializeDashboard() {
+    setState(() {
+      _currentScreen = _getScreenByIndex(selectedIndex);
+    });
+    _fetchDeviceStatus();
+    _startStatusRefreshTimer();
   }
 
   void _startStatusRefreshTimer() {
@@ -103,7 +183,9 @@ class _DashboardScreenState extends State<DashboardScreen>
 
   @override
   void dispose() {
-    _statusRefreshTimer.cancel();
+    if (_statusRefreshTimer.isActive) {
+      _statusRefreshTimer.cancel();
+    }
     super.dispose();
   }
 
@@ -117,10 +199,7 @@ class _DashboardScreenState extends State<DashboardScreen>
   Widget _getScreenByIndex(int index) {
     switch (index) {
       case 0:
-        return DashboardPage(
-          username: username!,
-          onJumpToIndex: onSelect, // Pass the callback
-        );
+        return DashboardPage(username: username!, onJumpToIndex: onSelect);
       case 1:
         return LocationScreen(username: username!);
       case 2:
@@ -201,22 +280,19 @@ class _DashboardScreenState extends State<DashboardScreen>
                       onPressed: () => Scaffold.of(context).openDrawer(),
                     ),
                   ),
-                  title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  title: Row(
                     children: [
+                      Image.asset(
+                        'assets/icon/app_icon.png',
+                        height: 28,
+                      ),
+                      const SizedBox(width: 8),
                       Text(
                         'Parental Radar',
                         style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Righteous',
+                          fontSize: 20,
                           color: isDark ? Colors.white : Colors.black,
-                        ),
-                      ),
-                      Text(
-                        "User ID: $username",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: isDark ? Colors.white70 : Colors.black54,
                         ),
                       ),
                     ],
@@ -224,19 +300,16 @@ class _DashboardScreenState extends State<DashboardScreen>
                   actions: [
                     IconButton(
                       icon: const Icon(Icons.notifications_none),
-                      tooltip: 'Notifications',
                       onPressed: () =>
                           Navigator.pushNamed(context, '/notifications'),
                     ),
                     IconButton(
                       icon: const Icon(Icons.settings),
-                      tooltip: 'Settings',
                       onPressed: () =>
                           Navigator.pushNamed(context, '/settings'),
                     ),
                     IconButton(
                       icon: const Icon(Icons.edit),
-                      tooltip: 'Edit Device',
                       onPressed: () =>
                           Navigator.pushNamed(context, '/add-device'),
                     ),
@@ -283,7 +356,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                         decoration: BoxDecoration(
                           color: isDark
                               ? const Color(0xFF1F1F1F)
-                              : const Color.fromARGB(255, 254, 254, 254),
+                              : const Color(0xFFFDFDFD),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.1),
@@ -295,34 +368,42 @@ class _DashboardScreenState extends State<DashboardScreen>
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            Row(
                               children: [
-                                Text(
-                                  "Parental Radar",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineSmall
-                                      ?.copyWith(
+                                Image.asset(
+                                  'assets/icon/app_icon.png',
+                                  height: 32,
+                                ),
+                                const SizedBox(width: 10),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Parental Radar",
+                                      style: TextStyle(
+                                        fontFamily: 'Righteous',
+                                        fontSize: 22,
                                         color: isDark
                                             ? Colors.white
                                             : Colors.black,
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: FontWeight.w500,
                                       ),
-                                ),
-                                const SizedBox(height: 6),
-                                Row(
-                                  children: [
-                                    _buildStatusIndicator(),
-                                    const SizedBox(width: 12),
-                                    Text(
-                                      "User ID: $username",
-                                      style: TextStyle(
-                                        color: isDark
-                                            ? Colors.white70
-                                            : Colors.black,
-                                        fontSize: 14,
-                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Row(
+                                      children: [
+                                        _buildStatusIndicator(),
+                                        const SizedBox(width: 12),
+                                        Text(
+                                          "User ID: $username",
+                                          style: TextStyle(
+                                            color: isDark
+                                                ? Colors.white70
+                                                : Colors.black,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -332,23 +413,20 @@ class _DashboardScreenState extends State<DashboardScreen>
                               children: [
                                 IconButton(
                                   icon: const Icon(Icons.notifications_none),
-                                  tooltip: 'Notifications',
                                   onPressed: () => Navigator.pushNamed(
                                       context, '/notifications'),
                                   color: isDark ? Colors.white : null,
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.settings),
-                                  tooltip: 'Settings',
                                   onPressed: () =>
                                       Navigator.pushNamed(context, '/settings'),
                                   color: isDark ? Colors.white : null,
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.edit),
-                                  tooltip: 'Edit Device',
-                                  onPressed: () =>
-                                      Navigator.pushNamed(context, '/add-device'),
+                                  onPressed: () => Navigator.pushNamed(
+                                      context, '/add-device'),
                                   color: isDark ? Colors.white : null,
                                 ),
                                 Padding(
