@@ -91,7 +91,7 @@ class _GeofencingScreenState extends State<GeofencingScreen> {
           children: [
             Icon(Icons.check_circle, color: Colors.white),
             SizedBox(width: 12),
-            Text("Geofence command set successfully"),
+            Text("Geofence command set successfully", style: TextStyle(fontFamily: 'NexaBold')),
           ],
         ),
         backgroundColor: Colors.green,
@@ -164,6 +164,7 @@ class _GeofencingScreenState extends State<GeofencingScreen> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
+                fontFamily: 'NexaBold',
                 color: isDark ? Colors.white : Colors.black,
               ),
             ),
@@ -251,6 +252,7 @@ class _GeofencingScreenState extends State<GeofencingScreen> {
                                 Text(
                                   "🛠️ Set New Geofence",
                                   style: theme.textTheme.titleMedium?.copyWith(
+                                    fontFamily: 'NexaBold',
                                     color: isDark
                                         ? Colors.white
                                         : theme.colorScheme.onSurface,
@@ -327,6 +329,7 @@ class _GeofencingScreenState extends State<GeofencingScreen> {
                                       style: TextStyle(
                                         color: isDark ? Colors.white : Colors.black,
                                         fontSize: 12,
+                                        fontFamily: 'NexaBold',
                                       ),
                                     ),
                                   ],
@@ -336,7 +339,7 @@ class _GeofencingScreenState extends State<GeofencingScreen> {
                                     padding: const EdgeInsets.only(top: 6),
                                     child: Text(
                                       _radiusWarning!,
-                                      style: const TextStyle(color: Colors.red),
+                                      style: const TextStyle(color: Colors.red, fontFamily: 'NexaBold'),
                                     ),
                                   ),
                                 const SizedBox(height: 16),
@@ -351,6 +354,7 @@ class _GeofencingScreenState extends State<GeofencingScreen> {
                                       waitTime > 0
                                           ? "Please wait: $waitTime s"
                                           : "Send Geofence",
+                                      style: const TextStyle(fontFamily: 'NexaBold'),
                                     ),
                                     style: ElevatedButton.styleFrom(
                                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -402,6 +406,7 @@ class _GeofencingScreenState extends State<GeofencingScreen> {
                     title,
                     style: theme.textTheme.titleSmall!.copyWith(
                       fontWeight: FontWeight.w600,
+                      fontFamily: 'NexaBold',
                     ),
                   ),
                 ],
@@ -414,13 +419,17 @@ class _GeofencingScreenState extends State<GeofencingScreen> {
                     children: [
                       Text(
                         "${entry.key}: ",
-                        style: const TextStyle(fontWeight: FontWeight.w500),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'NexaBold',
+                        ),
                       ),
                       Expanded(
                         child: Text(
                           entry.value,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
+                            fontFamily: 'NexaBold',
                             color: entry.key == "Status"
                                 ? statusColor
                                 : theme.textTheme.bodyMedium!.color,

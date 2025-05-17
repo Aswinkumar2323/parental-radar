@@ -52,16 +52,22 @@ class _StealthModeScreenState extends State<StealthModeScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("$action Stealth Mode?"),
-        content: Text("Are you sure you want to $action stealth mode?"),
+        title: Text(
+          "$action Stealth Mode?",
+          style: const TextStyle(fontFamily: 'NexaBold'),
+        ),
+        content: Text(
+          "Are you sure you want to $action stealth mode?",
+          style: const TextStyle(fontFamily: 'NexaBold'),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text("Cancel"),
+            child: const Text("Cancel", style: TextStyle(fontFamily: 'NexaBold')),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            child: Text(action),
+            child: Text(action, style: const TextStyle(fontFamily: 'NexaBold')),
           ),
         ],
       ),
@@ -105,6 +111,7 @@ class _StealthModeScreenState extends State<StealthModeScreen> {
           child: Text(
             'Stealth Mode',
             style: TextStyle(
+              fontFamily: 'NexaBold',
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black,
@@ -168,6 +175,7 @@ class _StealthModeScreenState extends State<StealthModeScreen> {
                               Text(
                                 "Enable Stealth",
                                 style: TextStyle(
+                                  fontFamily: 'NexaBold',
                                   color: isDark ? Colors.white : Colors.black87,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
@@ -178,16 +186,13 @@ class _StealthModeScreenState extends State<StealthModeScreen> {
                                 onChanged: (value) => _confirmToggle(value),
                                 activeColor: enabledColor,
                                 inactiveTrackColor: disabledColor.withOpacity(0.6),
-                                inactiveThumbColor: Colors.white, // Always white thumb
-                                activeThumbImage: null,
-                                inactiveThumbImage: null,
+                                inactiveThumbColor: Colors.white,
                               ),
                             ],
                           ),
                         ),
                         const SizedBox(height: 50),
 
-                        // New Rounded Container wrapping all
                         Container(
                           padding: const EdgeInsets.all(24),
                           decoration: BoxDecoration(
@@ -203,7 +208,6 @@ class _StealthModeScreenState extends State<StealthModeScreen> {
                           ),
                           child: Column(
                             children: [
-                              // Icon with circular background
                               Container(
                                 width: 140,
                                 height: 140,
@@ -233,12 +237,12 @@ class _StealthModeScreenState extends State<StealthModeScreen> {
 
                               const SizedBox(height: 24),
 
-                              // Stealth Mode status text
                               Text(
                                 isStealthEnabled
                                     ? "Stealth Mode is ON"
                                     : "Stealth Mode is OFF",
                                 style: TextStyle(
+                                  fontFamily: 'NexaBold',
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                   color: isStealthEnabled
@@ -249,10 +253,10 @@ class _StealthModeScreenState extends State<StealthModeScreen> {
 
                               const SizedBox(height: 12),
 
-                              // Target App status
                               Text(
                                 "Target App: ${isStealthEnabled ? "Active" : "Inactive"}",
                                 style: TextStyle(
+                                  fontFamily: 'NexaBold',
                                   fontSize: 16,
                                   color: isStealthEnabled
                                       ? enabledColor

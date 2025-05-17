@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -70,73 +69,59 @@ class _DashboardScreenState extends State<DashboardScreen>
     }
   }
 
-Future<void> _checkFeedbackStatus(String uid) async {
-  final feedbackDoc = await FirebaseFirestore.instance
-      .collection('users')
-      .doc(uid)
-      .collection('feedback')
-      .doc('status')
-      .get();
+  Future<void> _checkFeedbackStatus(String uid) async {
+    final feedbackDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('feedback')
+        .doc('status')
+        .get();
 
-  feedback1Done = feedbackDoc.data()?['feedback1'] == true;
-  feedback2Done = feedbackDoc.data()?['feedback2'] == true;
+    feedback1Done = feedbackDoc.data()?['feedback1'] == true;
+    feedback2Done = feedbackDoc.data()?['feedback2'] == true;
 
-  if (!feedback1Done) {
-    setState(() {
-      _currentScreen = Stack(
-        children: [
-          Container(
-            color: widget.isDarkMode ? Colors.black : Colors.white,
-          ),
-          Feedback1(
-            onComplete: (int selectedFeedback) async {
-              await FirebaseFirestore.instance
-                  .collection('users')
-                  .doc(uid)
-                  .collection('feedback')
-                  .doc('status')
-                  .set({
-                    'feedback1': true,
-                    'feedback1_value': selectedFeedback,
-                  }, SetOptions(merge: true));
-              setState(() => feedback1Done = true);
-              _checkFeedbackStatus(uid);
-            },
-          ),
-        ],
-      );
-    });
-  } else if (!feedback2Done) {
-    setState(() {
-      _currentScreen = Stack(
-        children: [
-          Container(
-            color: widget.isDarkMode ? Colors.black : Colors.white,
-          ),
-          Feedback2(
-            onComplete: (int selectedFeedback) async {
-              await FirebaseFirestore.instance
-                  .collection('users')
-                  .doc(uid)
-                  .collection('feedback')
-                  .doc('status')
-                  .set({
-                    'feedback2': true,
-                    'feedback2_value': selectedFeedback,
-                  }, SetOptions(merge: true));
-              setState(() => feedback2Done = true);
-              _initializeDashboard();
-            },
-          ),
-        ],
-      );
-    });
-  } else {
-    _initializeDashboard();
+    if (!feedback1Done) {
+      setState(() {
+        _currentScreen = _buildFeedbackScreen(
+          Feedback1(onComplete: (selected) async {
+            await _submitFeedback(uid, 'feedback1', selected);
+            feedback1Done = true;
+            _checkFeedbackStatus(uid);
+          }),
+        );
+      });
+    } else if (!feedback2Done) {
+      setState(() {
+        _currentScreen = _buildFeedbackScreen(
+          Feedback2(onComplete: (selected) async {
+            await _submitFeedback(uid, 'feedback2', selected);
+            feedback2Done = true;
+            _initializeDashboard();
+          }),
+        );
+      });
+    } else {
+      _initializeDashboard();
+    }
   }
-}
 
+  Widget _buildFeedbackScreen(Widget form) {
+    return Stack(
+      children: [
+        Container(color: widget.isDarkMode ? Colors.black : Colors.white),
+        form,
+      ],
+    );
+  }
 
+  Future<void> _submitFeedback(String uid, String type, int value) async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('feedback')
+        .doc('status')
+        .set({type: true, '${type}_value': value}, SetOptions(merge: true));
+  }
 
   void _initializeDashboard() {
     setState(() {
@@ -154,8 +139,8 @@ Future<void> _checkFeedbackStatus(String uid) async {
 
   Future<void> _fetchDeviceStatus() async {
     if (username == null) return;
-
     setState(() => isLoading = true);
+
     try {
       final response = await fetchModuleData(
         module: 'device_codes',
@@ -163,18 +148,10 @@ Future<void> _checkFeedbackStatus(String uid) async {
       );
 
       final deviceData = response['data'];
-
-      if (deviceData != null && deviceData['used'] != null) {
-        setState(() {
-          isDeviceActive = deviceData['used'] == true;
-          isLoading = false;
-        });
-      } else {
-        setState(() {
-          isDeviceActive = null;
-          isLoading = false;
-        });
-      }
+      setState(() {
+        isDeviceActive = deviceData?['used'] == true;
+        isLoading = false;
+      });
     } catch (e) {
       print('Error fetching device status: $e');
       setState(() => isLoading = false);
@@ -197,30 +174,22 @@ Future<void> _checkFeedbackStatus(String uid) async {
   }
 
   Widget _getScreenByIndex(int index) {
-    switch (index) {
-      case 0:
-        return DashboardPage(username: username!, onJumpToIndex: onSelect);
-      case 1:
-        return LocationScreen(username: username!);
-      case 2:
-        return GeofencingScreen(username: username!);
-      case 3:
-        return SmsScreen(username: username!);
-      case 4:
-        return CallScreen(username: username!);
-      case 5:
-        return KeyloggerScreen(username: username!);
-      case 6:
-        return WhatsAppScreen(username: username!);
-      case 7:
-        return InstalledAppsScreen(username: username!);
-      case 8:
-        return BlockedAppsScreen(username: username!);
-      case 9:
-        return StealthModeScreen(username: username!);
-      default:
-        return const Center(child: Text("Unknown module"));
-    }
+    final screens = [
+      DashboardPage(username: username!, onJumpToIndex: onSelect),
+      LocationScreen(username: username!),
+      GeofencingScreen(username: username!),
+      SmsScreen(username: username!),
+      CallScreen(username: username!),
+      KeyloggerScreen(username: username!),
+      WhatsAppScreen(username: username!),
+      InstalledAppsScreen(username: username!),
+      BlockedAppsScreen(username: username!),
+      StealthModeScreen(username: username!),
+    ];
+
+    return index >= 0 && index < screens.length
+        ? screens[index]
+        : const Center(child: Text("Unknown module"));
   }
 
   Widget _buildStatusIndicator() {
@@ -231,7 +200,6 @@ Future<void> _checkFeedbackStatus(String uid) async {
         child: CircularProgressIndicator(strokeWidth: 2),
       );
     }
-
     if (isDeviceActive == null) {
       return const Text("No Status");
     }
@@ -246,7 +214,7 @@ Future<void> _checkFeedbackStatus(String uid) async {
         const SizedBox(width: 4),
         Text(
           isDeviceActive! ? "Device Active" : "Device Inactive",
-          style: const TextStyle(fontSize: 14),
+          style: const TextStyle(fontSize: 13),
         ),
       ],
     );
@@ -259,11 +227,8 @@ Future<void> _checkFeedbackStatus(String uid) async {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isLargeScreen = constraints.maxWidth >= 800;
-
         if (username == null) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
         }
 
         return Scaffold(
@@ -271,8 +236,7 @@ Future<void> _checkFeedbackStatus(String uid) async {
           appBar: isLargeScreen
               ? null
               : AppBar(
-                  backgroundColor:
-                      isDark ? const Color(0xFF1F1F1F) : Colors.white,
+                  backgroundColor: isDark ? const Color(0xFF1F1F1F) : Colors.white,
                   foregroundColor: isDark ? Colors.white : Colors.black,
                   leading: Builder(
                     builder: (context) => IconButton(
@@ -282,17 +246,17 @@ Future<void> _checkFeedbackStatus(String uid) async {
                   ),
                   title: Row(
                     children: [
-                      Image.asset(
-                        'assets/icon/app_icon.png',
-                        height: 28,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Parental Radar',
-                        style: TextStyle(
-                          fontFamily: 'Righteous',
-                          fontSize: 20,
-                          color: isDark ? Colors.white : Colors.black,
+                      Image.asset('assets/icon/app_icon.png', height: 24),
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: Text(
+                          'Parental Radar',
+                          style: TextStyle(
+                            fontFamily: 'Righteous',
+                            fontSize: 18,
+                            overflow: TextOverflow.ellipsis,
+                            color: isDark ? Colors.white : Colors.black,
+                          ),
                         ),
                       ),
                     ],
@@ -300,21 +264,27 @@ Future<void> _checkFeedbackStatus(String uid) async {
                   actions: [
                     IconButton(
                       icon: const Icon(Icons.notifications_none),
-                      onPressed: () =>
-                          Navigator.pushNamed(context, '/notifications'),
+                      onPressed: () => Navigator.pushNamed(context, '/notifications'),
+                      tooltip: 'Notifications',
+                      iconSize: 22,
+                      visualDensity: VisualDensity.compact,
                     ),
                     IconButton(
                       icon: const Icon(Icons.settings),
-                      onPressed: () =>
-                          Navigator.pushNamed(context, '/settings'),
+                      onPressed: () => Navigator.pushNamed(context, '/settings'),
+                      tooltip: 'Settings',
+                      iconSize: 22,
+                      visualDensity: VisualDensity.compact,
                     ),
                     IconButton(
                       icon: const Icon(Icons.edit),
-                      onPressed: () =>
-                          Navigator.pushNamed(context, '/add-device'),
+                      onPressed: () => Navigator.pushNamed(context, '/add-device'),
+                      tooltip: 'Edit Device',
+                      iconSize: 22,
+                      visualDensity: VisualDensity.compact,
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
                       child: _buildStatusIndicator(),
                     ),
                   ],
@@ -349,17 +319,12 @@ Future<void> _checkFeedbackStatus(String uid) async {
                     if (isLargeScreen)
                       Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 16,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                         decoration: BoxDecoration(
-                          color: isDark
-                              ? const Color(0xFF1F1F1F)
-                              : const Color(0xFFFDFDFD),
+                          color: isDark ? const Color(0xFF1F1F1F) : const Color(0xFFFDFDFD),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withOpacity(0.05),
                               blurRadius: 6,
                               offset: const Offset(0, 3),
                             ),
@@ -370,10 +335,7 @@ Future<void> _checkFeedbackStatus(String uid) async {
                           children: [
                             Row(
                               children: [
-                                Image.asset(
-                                  'assets/icon/app_icon.png',
-                                  height: 32,
-                                ),
+                                Image.asset('assets/icon/app_icon.png', height: 30),
                                 const SizedBox(width: 10),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -382,11 +344,8 @@ Future<void> _checkFeedbackStatus(String uid) async {
                                       "Parental Radar",
                                       style: TextStyle(
                                         fontFamily: 'Righteous',
-                                        fontSize: 22,
-                                        color: isDark
-                                            ? Colors.white
-                                            : Colors.black,
-                                        fontWeight: FontWeight.w500,
+                                        fontSize: 20,
+                                        color: isDark ? Colors.white : Colors.black,
                                       ),
                                     ),
                                     const SizedBox(height: 6),
@@ -397,9 +356,7 @@ Future<void> _checkFeedbackStatus(String uid) async {
                                         Text(
                                           "User ID: $username",
                                           style: TextStyle(
-                                            color: isDark
-                                                ? Colors.white70
-                                                : Colors.black,
+                                            color: isDark ? Colors.white70 : Colors.black,
                                             fontSize: 14,
                                           ),
                                         ),
@@ -413,32 +370,18 @@ Future<void> _checkFeedbackStatus(String uid) async {
                               children: [
                                 IconButton(
                                   icon: const Icon(Icons.notifications_none),
-                                  onPressed: () => Navigator.pushNamed(
-                                      context, '/notifications'),
+                                  onPressed: () => Navigator.pushNamed(context, '/notifications'),
                                   color: isDark ? Colors.white : null,
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.settings),
-                                  onPressed: () =>
-                                      Navigator.pushNamed(context, '/settings'),
+                                  onPressed: () => Navigator.pushNamed(context, '/settings'),
                                   color: isDark ? Colors.white : null,
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.edit),
-                                  onPressed: () => Navigator.pushNamed(
-                                      context, '/add-device'),
+                                  onPressed: () => Navigator.pushNamed(context, '/add-device'),
                                   color: isDark ? Colors.white : null,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 8),
-                                  child: Text(
-                                    username!,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color:
-                                          isDark ? Colors.white : Colors.black,
-                                    ),
-                                  ),
                                 ),
                               ],
                             ),
@@ -448,8 +391,7 @@ Future<void> _checkFeedbackStatus(String uid) async {
                     Expanded(
                       child: AnimatedSwitcher(
                         duration: 400.ms,
-                        transitionBuilder: (child, animation) =>
-                            FadeTransition(
+                        transitionBuilder: (child, animation) => FadeTransition(
                           opacity: animation,
                           child: child,
                         ),

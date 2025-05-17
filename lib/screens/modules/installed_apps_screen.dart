@@ -144,6 +144,7 @@ class _InstalledAppsScreenState extends State<InstalledAppsScreen> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
+              fontFamily: 'NexaBold',
               color: isDark ? Colors.white : Colors.black,
             ),
           ),
@@ -201,6 +202,7 @@ class _InstalledAppsScreenState extends State<InstalledAppsScreen> {
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
+                            fontFamily: 'NexaBold',
                             color: isDark
                                 ? const Color.fromARGB(255, 255, 255, 255)
                                 : Colors.black87,
@@ -232,8 +234,10 @@ class _InstalledAppsScreenState extends State<InstalledAppsScreen> {
                                       const Text(
                                         'All Installed Apps',
                                         style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'NexaBold',
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -241,18 +245,18 @@ class _InstalledAppsScreenState extends State<InstalledAppsScreen> {
                                   TextField(
                                     controller: _searchAllController,
                                     style: TextStyle(
-                                        color:
-                                            isDark ? Colors.white : Colors.black),
+                                      color: isDark ? Colors.white : Colors.black,
+                                      fontFamily: 'NexaBold',
+                                    ),
                                     decoration: InputDecoration(
                                       hintText: 'Search apps...',
                                       hintStyle: TextStyle(
-                                          color: isDark
-                                              ? Colors.white54
-                                              : Colors.black54),
+                                        color: isDark ? Colors.white54 : Colors.black54,
+                                        fontFamily: 'NexaBold',
+                                      ),
                                       prefixIcon: Icon(Icons.search,
-                                          color: isDark
-                                              ? Colors.white
-                                              : Colors.black),
+                                          color:
+                                              isDark ? Colors.white : Colors.black),
                                       filled: true,
                                       fillColor: isDark
                                           ? Colors.grey.shade800
@@ -278,9 +282,11 @@ class _InstalledAppsScreenState extends State<InstalledAppsScreen> {
                                             title: Text(
                                               app['name']!,
                                               style: TextStyle(
-                                                  color: isDark
-                                                      ? Colors.white
-                                                      : Colors.black),
+                                                fontFamily: 'NexaBold',
+                                                color: isDark
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                              ),
                                             ),
                                           ).animate().fadeIn(delay: (index * 50).ms);
                                         },
@@ -310,8 +316,10 @@ class _InstalledAppsScreenState extends State<InstalledAppsScreen> {
                                       const Text(
                                         'Newly Installed Apps',
                                         style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'NexaBold',
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -319,18 +327,18 @@ class _InstalledAppsScreenState extends State<InstalledAppsScreen> {
                                   TextField(
                                     controller: _searchNewController,
                                     style: TextStyle(
-                                        color:
-                                            isDark ? Colors.white : Colors.black),
+                                      color: isDark ? Colors.white : Colors.black,
+                                      fontFamily: 'NexaBold',
+                                    ),
                                     decoration: InputDecoration(
                                       hintText: 'Search new apps...',
                                       hintStyle: TextStyle(
-                                          color: isDark
-                                              ? Colors.white54
-                                              : Colors.black54),
+                                        color: isDark ? Colors.white54 : Colors.black54,
+                                        fontFamily: 'NexaBold',
+                                      ),
                                       prefixIcon: Icon(Icons.search,
-                                          color: isDark
-                                              ? Colors.white
-                                              : Colors.black),
+                                          color:
+                                              isDark ? Colors.white : Colors.black),
                                       filled: true,
                                       fillColor: isDark
                                           ? Colors.grey.shade800
@@ -345,9 +353,10 @@ class _InstalledAppsScreenState extends State<InstalledAppsScreen> {
                                   Text(
                                     'Count: ${newApps.length}',
                                     style: TextStyle(
-                                        color: isDark
-                                            ? Colors.white70
-                                            : Colors.black54),
+                                      color:
+                                          isDark ? Colors.white70 : Colors.black54,
+                                      fontFamily: 'NexaBold',
+                                    ),
                                   ),
                                   const SizedBox(height: 4),
                                   Expanded(
@@ -362,9 +371,11 @@ class _InstalledAppsScreenState extends State<InstalledAppsScreen> {
                                             title: Text(
                                               app['name']!,
                                               style: TextStyle(
-                                                  color: isDark
-                                                      ? Colors.white
-                                                      : Colors.black),
+                                                fontFamily: 'NexaBold',
+                                                color: isDark
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                              ),
                                             ),
                                           ).animate().fadeIn(delay: (index * 80).ms);
                                         },

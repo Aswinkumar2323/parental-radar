@@ -58,18 +58,10 @@ class _BlockedAppsScreenState extends State<BlockedAppsScreen> {
   Future<void> loadAll() async {
     setState(() => isLoading = true);
     try {
-      final data = await fetchModuleData(
-        module: 'iapp',
-        userId: widget.username,
-      );
-
+      final data = await fetchModuleData(module: 'iapp', userId: widget.username);
       final installedResult = await ParentDecryption.decrypt(data, widget.username);
 
-
-      final blockedResult = await fetchModuleData(
-        module: 'bapp',
-        userId: widget.username,
-      );
+      final blockedResult = await fetchModuleData(module: 'bapp', userId: widget.username);
 
       List<Map<String, String>> fetchedInstalled = [];
       Map<String, DateTime> fetchedBlocked = {};
@@ -128,37 +120,41 @@ class _BlockedAppsScreenState extends State<BlockedAppsScreen> {
     final confirmed = await showDialog<dynamic>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(isCurrentlyBlocked ? 'Unblock App?' : 'Block App?'),
-        content: isCurrentlyBlocked
-            ? Text('Are you sure you want to unblock this app?')
-            : Text('Select duration to block this app:'),
+        title: Text(isCurrentlyBlocked ? 'Unblock App?' : 'Block App?',
+            style: TextStyle(fontFamily: 'NexaBold')),
+        content: Text(
+          isCurrentlyBlocked
+              ? 'Are you sure you want to unblock this app?'
+              : 'Select duration to block this app:',
+          style: TextStyle(fontFamily: 'NexaBold'),
+        ),
         actions: isCurrentlyBlocked
             ? [
                 TextButton(
                   onPressed: () => Navigator.pop(context, false),
-                  child: Text('Cancel'),
+                  child: Text('Cancel', style: TextStyle(fontFamily: 'NexaBold')),
                 ),
                 ElevatedButton(
                   onPressed: () => Navigator.pop(context, true),
-                  child: Text('Unblock'),
+                  child: Text('Unblock', style: TextStyle(fontFamily: 'NexaBold')),
                 ),
               ]
             : [
                 TextButton(
                   onPressed: () => Navigator.pop(context, false),
-                  child: Text('Cancel'),
+                  child: Text('Cancel', style: TextStyle(fontFamily: 'NexaBold')),
                 ),
                 ElevatedButton(
                   onPressed: () => Navigator.pop(context, 15),
-                  child: Text('15 mins'),
+                  child: Text('15 mins', style: TextStyle(fontFamily: 'NexaBold')),
                 ),
                 ElevatedButton(
                   onPressed: () => Navigator.pop(context, 30),
-                  child: Text('30 mins'),
+                  child: Text('30 mins', style: TextStyle(fontFamily: 'NexaBold')),
                 ),
                 ElevatedButton(
                   onPressed: () => Navigator.pop(context, 60),
-                  child: Text('1 hour'),
+                  child: Text('1 hour', style: TextStyle(fontFamily: 'NexaBold')),
                 ),
               ],
       ),
@@ -194,12 +190,13 @@ class _BlockedAppsScreenState extends State<BlockedAppsScreen> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text("Update Complete"),
-            content: Text('$_pendingActionMessage successfully.'),
+            title: Text("Update Complete", style: TextStyle(fontFamily: 'NexaBold')),
+            content: Text('$_pendingActionMessage successfully.',
+                style: TextStyle(fontFamily: 'NexaBold')),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text("OK"),
+                child: Text("OK", style: TextStyle(fontFamily: 'NexaBold')),
               ),
             ],
           ),
@@ -261,6 +258,7 @@ class _BlockedAppsScreenState extends State<BlockedAppsScreen> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
+              fontFamily: 'NexaBold',
               color: isDark ? Colors.white : Colors.black,
             ),
           ),
@@ -298,13 +296,17 @@ class _BlockedAppsScreenState extends State<BlockedAppsScreen> {
                             : Colors.yellow.shade100,
                         content: Text(
                           '$_pendingActionMessage will reflect in target device within $_remainingSeconds seconds...',
-                          style: TextStyle(fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'NexaBold',
+                          ),
                         ),
                         actions: [
                           TextButton(
                             onPressed: () =>
                                 setState(() => _isProcessing = false),
-                            child: Text('Dismiss'),
+                            child:
+                                Text('Dismiss', style: TextStyle(fontFamily: 'NexaBold')),
                           ),
                         ],
                       ),
@@ -315,7 +317,7 @@ class _BlockedAppsScreenState extends State<BlockedAppsScreen> {
                           'List of All Blocked Apps',
                           style: theme.textTheme.titleMedium!.copyWith(
                             color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                            fontFamily: 'NexaBold',
                           ),
                         ),
                       ),
@@ -345,8 +347,9 @@ class _BlockedAppsScreenState extends State<BlockedAppsScreen> {
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.center,
-                                    style: theme.textTheme.labelMedium!.copyWith(
+                                    style: TextStyle(
                                       color: Colors.white,
+                                      fontFamily: 'NexaBold',
                                     ),
                                   ),
                                 ),
@@ -361,11 +364,11 @@ class _BlockedAppsScreenState extends State<BlockedAppsScreen> {
                           horizontal: 16, vertical: 8),
                       child: TextField(
                         controller: _searchController,
-                        style: const TextStyle(color: Colors.white),
+                        style: TextStyle(color: Colors.white, fontFamily: 'NexaBold'),
                         decoration: InputDecoration(
                           hintText: 'Search apps...',
-                          hintStyle: const TextStyle(color: Colors.white70),
-                          prefixIcon: const Icon(Icons.search, color: Colors.white),
+                          hintStyle: TextStyle(color: Colors.white70, fontFamily: 'NexaBold'),
+                          prefixIcon: Icon(Icons.search, color: Colors.white),
                           filled: true,
                           fillColor: Colors.white24,
                           border: OutlineInputBorder(
@@ -377,16 +380,17 @@ class _BlockedAppsScreenState extends State<BlockedAppsScreen> {
                     ),
                     SwitchListTile(
                       title: Text('Show only blocked apps',
-                          style: const TextStyle(color: Colors.white)),
+                          style: TextStyle(color: Colors.white, fontFamily: 'NexaBold')),
                       value: _showBlockedOnly,
                       onChanged: (value) =>
                           setState(() => _showBlockedOnly = value),
                     ),
                     if (filteredApps.isEmpty)
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.all(16),
                         child: Text('No matching apps found.',
-                            style: TextStyle(color: Colors.white)),
+                            style:
+                                TextStyle(color: Colors.white, fontFamily: 'NexaBold')),
                       ),
                     ...filteredApps.map((app) {
                       final name = app['name'] ?? 'Unknown';
@@ -433,11 +437,13 @@ class _BlockedAppsScreenState extends State<BlockedAppsScreen> {
                             ),
                             title: Text(name,
                                 style: TextStyle(
-                                    color: isDark ? Colors.white : Colors.black)),
+                                    color: isDark ? Colors.white : Colors.black,
+                                    fontFamily: 'NexaBold')),
                             subtitle: Text(package,
                                 style: TextStyle(
                                     color:
-                                        isDark ? Colors.white70 : Colors.black54)),
+                                        isDark ? Colors.white70 : Colors.black54,
+                                    fontFamily: 'NexaBold')),
                             trailing: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -455,6 +461,7 @@ class _BlockedAppsScreenState extends State<BlockedAppsScreen> {
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
+                                      fontFamily: 'NexaBold',
                                     ),
                                   ),
                                 ),
@@ -468,6 +475,7 @@ class _BlockedAppsScreenState extends State<BlockedAppsScreen> {
                                         color: isDark
                                             ? Colors.orangeAccent
                                             : Colors.red.shade700,
+                                        fontFamily: 'NexaBold',
                                       ),
                                     ),
                                   ),

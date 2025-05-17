@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../apis/get.dart'; // Adjust path if needed
+import '../../apis/get.dart';
 import 'ChatDetailScreen.dart';
-import 'package:flutter_animate/flutter_animate.dart'; // For animations
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../decryption/parent_decryption_array.dart';
 
 class WhatsAppScreen extends StatefulWidget {
@@ -97,13 +97,13 @@ class _WhatsAppScreenState extends State<WhatsAppScreen> {
           decoration: BoxDecoration(
             color: isDark ? Colors.grey.shade900 : Colors.white,
             borderRadius: BorderRadius.circular(20),
-            boxShadow: isDark
-                ? null
-                : [BoxShadow(color: Colors.black12, blurRadius: 4)],
+            boxShadow:
+                isDark ? null : [BoxShadow(color: Colors.black12, blurRadius: 4)],
           ),
           child: Text(
             'Whatsapp Monitoring',
             style: TextStyle(
+              fontFamily: 'NexaBold',
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black,
@@ -169,14 +169,11 @@ class _WhatsAppScreenState extends State<WhatsAppScreen> {
                 .toList();
 
             return ListView(
-              padding:
-                  const EdgeInsets.only(top: 100, bottom: 16, left: 12, right: 12),
+              padding: const EdgeInsets.fromLTRB(12, kToolbarHeight + 12, 12, 16),
               children: [
-                _buildStatCard("INCOMING MESSAGES", incomingToday,
-                    previousIncoming, isDark),
+                _buildStatCard("INCOMING MESSAGES", incomingToday, previousIncoming, isDark),
                 const SizedBox(height: 12),
-                _buildStatCard("OUTGOING MESSAGES", outgoingToday,
-                    previousOutgoing, isDark),
+                _buildStatCard("OUTGOING MESSAGES", outgoingToday, previousOutgoing, isDark),
                 const SizedBox(height: 12),
                 _buildTopChatCard(isDark),
                 const SizedBox(height: 16),
@@ -209,18 +206,17 @@ class _WhatsAppScreenState extends State<WhatsAppScreen> {
       decoration: BoxDecoration(
         color: isDark ? Colors.grey.shade900 : Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: isDark
-            ? null
-            : [BoxShadow(color: Colors.black12, blurRadius: 6)],
+        boxShadow: isDark ? null : [BoxShadow(color: Colors.black12, blurRadius: 6)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(title,
               style: TextStyle(
-                  color: isDark ? Colors.white : Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14)),
+                fontFamily: 'NexaBold',
+                color: isDark ? Colors.white : Colors.black,
+                fontSize: 14,
+              )),
           const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -228,9 +224,10 @@ class _WhatsAppScreenState extends State<WhatsAppScreen> {
               Text(
                 "$current messages",
                 style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : Colors.black),
+                  fontFamily: 'NexaBold',
+                  fontSize: 16,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
               ),
               Icon(icon, color: iconColor),
             ],
@@ -260,9 +257,7 @@ class _WhatsAppScreenState extends State<WhatsAppScreen> {
         decoration: BoxDecoration(
           color: isDark ? Colors.grey.shade900 : Colors.white,
           borderRadius: BorderRadius.circular(20),
-          boxShadow: isDark
-              ? null
-              : [BoxShadow(color: Colors.black12, blurRadius: 6)],
+          boxShadow: isDark ? null : [BoxShadow(color: Colors.black12, blurRadius: 6)],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -271,9 +266,9 @@ class _WhatsAppScreenState extends State<WhatsAppScreen> {
               child: Text(
                 "Top Conversation: $highestChatName",
                 style: TextStyle(
+                  fontFamily: 'NexaBold',
                   color: isDark ? Colors.white : Colors.black,
                   fontSize: 16,
-                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
@@ -294,9 +289,7 @@ class _WhatsAppScreenState extends State<WhatsAppScreen> {
       decoration: BoxDecoration(
         color: isDark ? Colors.grey.shade900 : Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: isDark
-            ? null
-            : [BoxShadow(color: Colors.black12, blurRadius: 6)],
+        boxShadow: isDark ? null : [BoxShadow(color: Colors.black12, blurRadius: 6)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -304,8 +297,8 @@ class _WhatsAppScreenState extends State<WhatsAppScreen> {
           Text(
             title,
             style: TextStyle(
+              fontFamily: 'NexaBold',
               fontSize: 18,
-              fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black,
             ),
           ),
@@ -327,17 +320,15 @@ class _WhatsAppScreenState extends State<WhatsAppScreen> {
         color: isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade100,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withOpacity(0.1)
-              : Colors.grey.withOpacity(0.3),
+          color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey.withOpacity(0.3),
         ),
       ),
       child: ListTile(
         title: Text(
           chatName,
           style: TextStyle(
+            fontFamily: 'NexaBold',
             color: isDark ? Colors.white : Colors.black87,
-            fontWeight: FontWeight.w500,
           ),
         ),
         trailing: Icon(

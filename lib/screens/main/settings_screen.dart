@@ -32,11 +32,73 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
-  Widget _buildUserField(String label, dynamic value, IconData icon) {
+  Future<void> _editField(String field, String label, IconData icon) async {
+    final TextEditingController controller = TextEditingController(
+      text: userData?[field]?.toString() ?? '',
+    );
+
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(icon, color: Colors.deepPurple),
+            const SizedBox(width: 8),
+            Text('Edit $label', style: const TextStyle(fontFamily: 'NexaBold')),
+          ],
+        ),
+        content: TextField(
+          controller: controller,
+          decoration: InputDecoration(
+            hintText: 'Enter new $label',
+            hintStyle: const TextStyle(fontFamily: 'NexaBold'),
+          ),
+          style: const TextStyle(fontFamily: 'NexaBold'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel', style: TextStyle(fontFamily: 'NexaBold')),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final uid = FirebaseAuth.instance.currentUser?.uid;
+              if (uid != null) {
+                await FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(uid)
+                    .update({field: controller.text.trim()});
+                await _fetchUserData();
+              }
+              Navigator.pop(context);
+            },
+            child: const Text('Save', style: TextStyle(fontFamily: 'NexaBold')),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUserField(String label, String field, IconData icon) {
+    final value = userData?[field]?.toString() ?? '-';
+
     return ListTile(
       leading: Icon(icon, color: Colors.deepPurple),
-      title: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-      subtitle: Text(value.toString()),
+      title: Text(
+        label,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontFamily: 'NexaBold',
+        ),
+      ),
+      subtitle: Text(
+        value,
+        style: const TextStyle(fontFamily: 'NexaBold'),
+      ),
+      trailing: IconButton(
+        icon: const Icon(Icons.edit, color: Colors.grey),
+        onPressed: () => _editField(field, label, icon),
+      ),
     );
   }
 
@@ -44,10 +106,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Parent Settings'),
+        title: const Text(
+          'Parent Settings',
+          style: TextStyle(fontFamily: 'NexaBold'),
+        ),
         centerTitle: true,
         backgroundColor: Colors.transparent,
-        foregroundColor: const Color.fromARGB(255, 255, 255, 255),
+        foregroundColor: Colors.white,
         elevation: 0,
       ),
       extendBodyBehindAppBar: true,
@@ -59,86 +124,64 @@ class _SettingsScreenState extends State<SettingsScreen> {
             end: Alignment.bottomRight,
           ),
         ),
-        child:
-            isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : SafeArea(
-                  child: ListView(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 24,
+        child: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SafeArea(
+                child: ListView(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                  children: [
+                    Animate(
+                      effects: [FadeEffect(duration: 500.ms), ScaleEffect()],
+                      child: const CircleAvatar(
+                        radius: 50,
+                        backgroundColor: Colors.white,
+                        child: Icon(
+                          Icons.person,
+                          size: 40,
+                          color: Colors.black,
+                        ),
+                      ),
                     ),
-                    children: [
-                      Animate(
-                        effects: [FadeEffect(duration: 500.ms), ScaleEffect()],
-                        child: const CircleAvatar(
-                          radius: 50,
-                          backgroundColor: Color.fromARGB(255, 255, 255, 255),
-                          child: Icon(
-                            Icons.person,
-                            size: 40,
-                            color: Color.fromARGB(255, 0, 0, 0),
-                          ),
+                    const SizedBox(height: 30),
+                    Animate(
+                      effects: [
+                        FadeEffect(duration: 300.ms),
+                        SlideEffect(begin: const Offset(0, 0.2)),
+                      ],
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 10,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          children: [
+                            _buildUserField("Name", 'name', Icons.person),
+                            const Divider(),
+                            _buildUserField("Phone", 'phone', Icons.phone),
+                            const Divider(),
+                            _buildUserField("Gender", 'gender', Icons.male),
+                            const Divider(),
+                            _buildUserField("Age", 'age', Icons.cake),
+                            const Divider(),
+                            _buildUserField("Date of Birth", 'dob',
+                                Icons.calendar_today),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 30),
-                      Animate(
-                        effects: [
-                          FadeEffect(duration: 300.ms),
-                          SlideEffect(begin: const Offset(0, 0.2)),
-                        ],
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
-                                blurRadius: 10,
-                                offset: const Offset(0, 5),
-                              ),
-                            ],
-                          ),
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            children: [
-                              _buildUserField(
-                                "Name",
-                                userData?['name'] ?? '-',
-                                Icons.person,
-                              ),
-                              const Divider(),
-                              _buildUserField(
-                                "Phone",
-                                userData?['phone'] ?? '-',
-                                Icons.phone,
-                              ),
-                              const Divider(),
-                              _buildUserField(
-                                "Gender",
-                                userData?['gender'] ?? '-',
-                                Icons.male,
-                              ),
-                              const Divider(),
-                              _buildUserField(
-                                "Age",
-                                userData?['age'] ?? '-',
-                                Icons.cake,
-                              ),
-                              const Divider(),
-                              _buildUserField(
-                                "Date of Birth",
-                                userData?['dob'] ?? '-',
-                                Icons.calendar_today,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 40),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 40),
+                  ],
                 ),
+              ),
       ),
     );
   }

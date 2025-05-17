@@ -99,7 +99,8 @@ class _KeyloggerScreenState extends State<KeyloggerScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(title,
-                    style: TextStyle(
+                    style: const TextStyle(
+                      fontFamily: 'NexaBold',
                       color: Colors.black87,
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
@@ -107,7 +108,10 @@ class _KeyloggerScreenState extends State<KeyloggerScreen> {
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: TextStyle(color: Colors.black54),
+                  style: const TextStyle(
+                    fontFamily: 'NexaBold',
+                    color: Colors.black54,
+                  ),
                 ),
               ],
             ),
@@ -138,16 +142,17 @@ class _KeyloggerScreenState extends State<KeyloggerScreen> {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               if (!isDark)
-                BoxShadow(
+                const BoxShadow(
                   color: Colors.black12,
                   blurRadius: 4,
                   offset: Offset(0, 2),
                 ),
             ],
           ),
-          child: Text(
+          child: const Text(
             'Keylogger',
             style: TextStyle(
+              fontFamily: 'NexaBold',
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
@@ -189,7 +194,10 @@ class _KeyloggerScreenState extends State<KeyloggerScreen> {
               return const Center(
                 child: Text(
                   "No keylogger data available",
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(
+                    fontFamily: 'NexaBold',
+                    color: Colors.white,
+                  ),
                 ),
               );
             }
@@ -224,8 +232,6 @@ class _KeyloggerScreenState extends State<KeyloggerScreen> {
                     isDark: isDark,
                   ).animate().fadeIn().slideY(begin: 0.2, delay: 200.ms),
                   const SizedBox(height: 16),
-
-                  // App selector
                   Container(
                     padding: const EdgeInsets.all(12),
                     margin: const EdgeInsets.symmetric(vertical: 5),
@@ -234,28 +240,42 @@ class _KeyloggerScreenState extends State<KeyloggerScreen> {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         if (!isDark)
-                          BoxShadow(color: Colors.black26, blurRadius: 5)
+                          const BoxShadow(color: Colors.black26, blurRadius: 5)
                       ],
                     ),
                     child: Row(
                       children: [
                         const Text(
                           "Select App:",
-                          style: TextStyle(color: Colors.black87),
+                          style: TextStyle(
+                            fontFamily: 'NexaBold',
+                            color: Colors.black87,
+                          ),
                         ),
                         const SizedBox(width: 12),
                         DropdownButton<String>(
                           dropdownColor: const Color(0xFFF0F0F0),
-                          style: const TextStyle(color: Colors.black87),
+                          style: const TextStyle(
+                            fontFamily: 'NexaBold',
+                            color: Colors.black87,
+                          ),
                           value: selectedApp.isEmpty ? null : selectedApp,
                           hint: const Text(
                             "All Apps",
-                            style: TextStyle(color: Colors.black54),
+                            style: TextStyle(
+                              fontFamily: 'NexaBold',
+                              color: Colors.black54,
+                            ),
                           ),
                           items: groupedData.keys
                               .map((app) => DropdownMenuItem<String>(
                                     value: app,
-                                    child: Text(app),
+                                    child: Text(
+                                      app,
+                                      style: const TextStyle(
+                                        fontFamily: 'NexaBold',
+                                      ),
+                                    ),
                                   ))
                               .toList(),
                           onChanged: (value) {
@@ -267,7 +287,6 @@ class _KeyloggerScreenState extends State<KeyloggerScreen> {
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 8),
                   ...groupedData.entries.map((entry) {
                     if (selectedApp.isNotEmpty && selectedApp != entry.key) {
@@ -282,7 +301,7 @@ class _KeyloggerScreenState extends State<KeyloggerScreen> {
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           if (!isDark)
-                            BoxShadow(color: Colors.black26, blurRadius: 4)
+                            const BoxShadow(color: Colors.black26, blurRadius: 4)
                         ],
                       ),
                       child: Column(
@@ -295,6 +314,7 @@ class _KeyloggerScreenState extends State<KeyloggerScreen> {
                               Text(
                                 entry.key,
                                 style: const TextStyle(
+                                  fontFamily: 'NexaBold',
                                   color: Colors.black87,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -310,7 +330,10 @@ class _KeyloggerScreenState extends State<KeyloggerScreen> {
                                   color: Colors.black87),
                               title: Text(
                                 msg,
-                                style: const TextStyle(color: Colors.black87),
+                                style: const TextStyle(
+                                  fontFamily: 'NexaBold',
+                                  color: Colors.black87,
+                                ),
                               ),
                             )
                                 .animate()

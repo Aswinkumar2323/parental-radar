@@ -14,11 +14,17 @@ class ChatDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(chatName),
+        title: Text(
+          chatName,
+          style: const TextStyle(
+            fontFamily: 'NexaBold',
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -34,9 +40,9 @@ class ChatDetailScreen extends StatelessWidget {
                   end: Alignment.topRight,
                   stops: [0.0, 0.5, 1.0],
                   colors: [
-                    Color(0xFF0090FF), // Primary
-                    Color(0xFF15D6A6), // Secondary
-                    Color(0xFF123A5B), // Tertiary
+                    Color(0xFF0090FF),
+                    Color(0xFF15D6A6),
+                    Color(0xFF123A5B),
                   ],
                 ),
         ),
@@ -80,16 +86,19 @@ class ChatDetailScreen extends StatelessWidget {
                   children: [
                     Text(
                       msg['message'],
-                      style: textTheme.bodyMedium?.copyWith(
+                      style: TextStyle(
+                        fontFamily: 'NexaBold',
+                        fontSize: 14,
                         color: isDark ? Colors.white : Colors.black,
                       ),
                     ),
                     const SizedBox(height: 6),
                     Text(
                       "${msg['sender']} • ${msg['time']}",
-                      style: textTheme.bodySmall?.copyWith(
-                        color: isDark ? Colors.grey[300] : Colors.grey[700],
+                      style: TextStyle(
+                        fontFamily: 'NexaBold',
                         fontSize: 11,
+                        color: isDark ? Colors.grey[300] : Colors.grey[700],
                       ),
                     ),
                   ],

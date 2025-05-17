@@ -79,9 +79,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                   const SizedBox(height: 20),
                   Text(
                     'Verify Your Email',
-                    style: GoogleFonts.readexPro(
+                    style: GoogleFonts.righteous(
                       fontSize: 24,
-                      fontWeight: FontWeight.bold,
                       color: const Color(0xFF123a5b),
                     ),
                     textAlign: TextAlign.center,
@@ -89,7 +88,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                   const SizedBox(height: 16),
                   Text(
                     'A verification link has been sent to your email. Once verified, you’ll be redirected automatically.',
-                    style: GoogleFonts.readexPro(
+                    style: GoogleFonts.righteous(
                       fontSize: 16,
                       color: Colors.grey[700],
                     ),
@@ -112,9 +111,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                       icon: const Icon(Icons.refresh, color: Colors.white),
                       label: Text(
                         'Resend Email',
-                        style: GoogleFonts.readexPro(
+                        style: GoogleFonts.righteous(
                           fontSize: 16,
-                          fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
                       ),

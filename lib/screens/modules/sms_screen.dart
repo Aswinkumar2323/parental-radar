@@ -31,7 +31,7 @@ class _SmsScreenState extends State<SmsScreen> {
     smsListFuture = _fetchSmsData();
   }
 
-    Future<List<dynamic>> _fetchSmsData() async {
+  Future<List<dynamic>> _fetchSmsData() async {
     final apidata = await fetchModuleData(
       module: 'sms',
       userId: widget.username,
@@ -39,7 +39,6 @@ class _SmsScreenState extends State<SmsScreen> {
     final data = await ParentDecryption.decrypt(apidata, widget.username);
     return data?['data']?['sms_data'] ?? [];
   }
-
 
   void refresh() => setState(() {
         smsListFuture = _fetchSmsData();
@@ -89,47 +88,43 @@ class _SmsScreenState extends State<SmsScreen> {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-appBar: AppBar(
-  automaticallyImplyLeading: false,
-  backgroundColor: Colors.transparent,
-  elevation: 0,
-  title: Container(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-    decoration: BoxDecoration(
-      color: Theme.of(context).brightness == Brightness.dark
-          ? Colors.grey.shade900
-          : Colors.white,
-      borderRadius: BorderRadius.circular(20),
-      boxShadow: Theme.of(context).brightness == Brightness.dark
-          ? null
-          : [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 4,
-                offset: Offset(0, 2),
-              ),
-            ],
-    ),
-    child: Text(
-      'SMS Monitoring',
-      style: TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        color: Theme.of(context).brightness == Brightness.dark
-            ? Colors.white
-            : Colors.black,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: isDark ? Colors.grey.shade900 : Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: isDark
+                ? null
+                : [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+          ),
+          child: Text(
+            'SMS Monitoring',
+            style: TextStyle(
+              fontFamily: 'NexaBold',
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black,
+            ),
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: refresh,
+            color: Colors.white,
+          ),
+        ],
       ),
-    ),
-  ),
-  actions: [
-    IconButton(
-      icon: const Icon(Icons.refresh),
-      onPressed: refresh,
-      color: Colors.white, // Optional: make visible on gradient background
-    ),
-  ],
-),
-
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -152,7 +147,7 @@ appBar: AppBar(
               return const Center(
                 child: Text(
                   'Failed to load data.',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white, fontFamily: 'NexaBold'),
                 ),
               );
             }
@@ -178,34 +173,29 @@ appBar: AppBar(
             return ListView(
               padding: const EdgeInsets.fromLTRB(0, kToolbarHeight + 15, 0, 15),
               children: [
-  const SizedBox(height: 20),
-  _statCard('INCOMING SMS', inbox, true, isDark),
-  const SizedBox(height: 20),
-  _statCard('OUTGOING SMS', sent, false, isDark),
-  const SizedBox(height: 20),
-  _topContactCard(topContact, isDark),
-  const SizedBox(height: 20),
-  _categoryBar(isDark),
-  const SizedBox(height: 20),
-  const Divider(color: Colors.white70),
-  const SizedBox(height: 20),
-  ...filteredList.map((sms) => Padding(
-    padding: const EdgeInsets.only(bottom: 12.0),
-    child: _smsTile(sms, isDark),
-  )),
-  const SizedBox(height: 20),
-],
-
-
-
+                const SizedBox(height: 20),
+                _statCard('INCOMING SMS', inbox, true, isDark),
+                const SizedBox(height: 20),
+                _statCard('OUTGOING SMS', sent, false, isDark),
+                const SizedBox(height: 20),
+                _topContactCard(topContact, isDark),
+                const SizedBox(height: 20),
+                _categoryBar(isDark),
+                const SizedBox(height: 20),
+                const Divider(color: Colors.white70),
+                const SizedBox(height: 20),
+                ...filteredList.map((sms) => Padding(
+                      padding: const EdgeInsets.only(bottom: 12.0),
+                      child: _smsTile(sms, isDark),
+                    )),
+                const SizedBox(height: 20),
+              ],
             );
           },
         ),
       ),
     );
   }
-
-
 
   Widget _statCard(String title, int count, bool isIncoming, bool isDark) {
     return Card(
@@ -219,7 +209,11 @@ appBar: AppBar(
         ),
         title: Text(
           title,
-          style: TextStyle(color: isDark ? Colors.white : Colors.black),
+          style: TextStyle(
+            fontFamily: 'NexaBold',
+            fontSize: 16,
+            color: isDark ? Colors.white : Colors.black,
+          ),
         ),
         subtitle: LinearProgressIndicator(
           value: (count / 100).clamp(0.0, 1.0),
@@ -231,6 +225,7 @@ appBar: AppBar(
           text: TextSpan(
             text: '$count ',
             style: TextStyle(
+              fontFamily: 'NexaBold',
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black,
@@ -240,6 +235,7 @@ appBar: AppBar(
                 text: 'msg${count == 1 ? '' : 's'}',
                 style: TextStyle(
                   fontSize: 18,
+                  fontFamily: 'NexaBold',
                   color: isDark ? Colors.white70 : Colors.black54,
                 ),
               ),
@@ -258,12 +254,18 @@ appBar: AppBar(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
         leading: const CircleAvatar(child: Icon(Icons.person)),
-        title: Text('Top Contact Today',
-            style: TextStyle(color: isDark ? Colors.white : Colors.black)),
-        subtitle: Text(contacts.first.key,
-            style: TextStyle(color: isDark ? Colors.white70 : Colors.black87)),
-        trailing: Text('${contacts.first.value} msgs',
-            style: TextStyle(color: isDark ? Colors.white : Colors.black)),
+        title: Text(
+          'Top Contact Today',
+          style: TextStyle(fontFamily: 'NexaBold', color: isDark ? Colors.white : Colors.black),
+        ),
+        subtitle: Text(
+          contacts.first.key,
+          style: TextStyle(fontFamily: 'NexaBold', color: isDark ? Colors.white70 : Colors.black87),
+        ),
+        trailing: Text(
+          '${contacts.first.value} msgs',
+          style: TextStyle(fontFamily: 'NexaBold', fontSize: 16, color: isDark ? Colors.white : Colors.black),
+        ),
       ),
     );
   }
@@ -281,6 +283,7 @@ appBar: AppBar(
               label: Text(
                 cat,
                 style: TextStyle(
+                  fontFamily: 'NexaBold',
                   color: isDark ? Colors.white : Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
@@ -288,8 +291,7 @@ appBar: AppBar(
               selected: cat == activeCategory,
               onSelected: (_) => setState(() => activeCategory = cat),
               selectedColor: isDark ? Colors.white24 : Colors.white,
-              backgroundColor:
-                  isDark ? Colors.grey.shade800 : Colors.white70,
+              backgroundColor: isDark ? Colors.grey.shade800 : Colors.white70,
             ),
           );
         }).toList(),
@@ -309,25 +311,28 @@ appBar: AppBar(
         ),
         title: Text(
           sms['address'] ?? 'Unknown',
-          style: TextStyle(color: isDark ? Colors.white : Colors.black),
+          style: TextStyle(fontFamily: 'NexaBold', color: isDark ? Colors.white : Colors.black),
         ),
         subtitle: Text(
           sms['body'] ?? '',
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(color: isDark ? Colors.white70 : Colors.black87),
+          style: TextStyle(fontFamily: 'NexaBold', color: isDark ? Colors.white70 : Colors.black87),
         ),
         trailing: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(_smsType(sms['type']),
-                style:
-                    TextStyle(color: isDark ? Colors.white70 : Colors.black)),
+            Text(
+              _smsType(sms['type']),
+              style: TextStyle(fontFamily: 'NexaBold', color: isDark ? Colors.white70 : Colors.black),
+            ),
             Text(
               _formatDate(sms['date'].toString()),
               style: TextStyle(
-                  fontSize: 11,
-                  color: isDark ? Colors.white54 : Colors.black54),
+                fontFamily: 'NexaBold',
+                fontSize: 11,
+                color: isDark ? Colors.white54 : Colors.black54,
+              ),
             ),
           ],
         ),
