@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'email_verification_screen.dart';
 
 class ParentAuth extends StatefulWidget {
@@ -13,8 +12,7 @@ class ParentAuth extends StatefulWidget {
 class _ParentAuthState extends State<ParentAuth> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
@@ -24,9 +22,7 @@ class _ParentAuthState extends State<ParentAuth> {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
     final confirmPassword = _confirmPasswordController.text;
-    return email.isNotEmpty &&
-        password.isNotEmpty &&
-        password == confirmPassword;
+    return email.isNotEmpty && password.isNotEmpty && password == confirmPassword;
   }
 
   Future<void> _createAccount() async {
@@ -36,8 +32,10 @@ class _ParentAuthState extends State<ParentAuth> {
     setState(() => _isLoading = true);
 
     try {
-      final authResult = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: email, password: password);
+      final authResult = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
       final user = authResult.user;
 
@@ -58,9 +56,7 @@ class _ParentAuthState extends State<ParentAuth> {
         errorMsg = 'Invalid email address';
       }
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(errorMsg)));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMsg)));
     } finally {
       setState(() => _isLoading = false);
     }
@@ -76,6 +72,8 @@ class _ParentAuthState extends State<ParentAuth> {
 
   @override
   Widget build(BuildContext context) {
+    const font = 'NexaBold';
+
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -110,17 +108,18 @@ class _ParentAuthState extends State<ParentAuth> {
                   children: [
                     Text(
                       'Create Your Account',
-                      style: GoogleFonts.readexPro(
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: const Color(0xFF123a5b),
+                        fontFamily: font,
+                        color: Color(0xFF123a5b),
                       ),
                     ),
                     const SizedBox(height: 30),
 
                     Text(
                       'Email Address',
-                      style: GoogleFonts.readexPro(fontSize: 14),
+                      style: const TextStyle(fontSize: 14, fontFamily: font),
                     ),
                     const SizedBox(height: 8),
                     TextFormField(
@@ -128,6 +127,7 @@ class _ParentAuthState extends State<ParentAuth> {
                       onChanged: (_) => setState(() {}),
                       decoration: InputDecoration(
                         hintText: 'Enter your email',
+                        hintStyle: const TextStyle(fontFamily: font),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -140,7 +140,7 @@ class _ParentAuthState extends State<ParentAuth> {
 
                     Text(
                       'Create Password',
-                      style: GoogleFonts.readexPro(fontSize: 14),
+                      style: const TextStyle(fontSize: 14, fontFamily: font),
                     ),
                     const SizedBox(height: 8),
                     TextFormField(
@@ -149,6 +149,7 @@ class _ParentAuthState extends State<ParentAuth> {
                       onChanged: (_) => setState(() {}),
                       decoration: InputDecoration(
                         hintText: 'Enter password',
+                        hintStyle: const TextStyle(fontFamily: font),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -160,10 +161,8 @@ class _ParentAuthState extends State<ParentAuth> {
                                 ? Icons.visibility
                                 : Icons.visibility_off,
                           ),
-                          onPressed:
-                              () => setState(() {
-                                _isPasswordVisible = !_isPasswordVisible;
-                              }),
+                          onPressed: () =>
+                              setState(() => _isPasswordVisible = !_isPasswordVisible),
                         ),
                       ),
                     ),
@@ -172,7 +171,7 @@ class _ParentAuthState extends State<ParentAuth> {
 
                     Text(
                       'Confirm Password',
-                      style: GoogleFonts.readexPro(fontSize: 14),
+                      style: const TextStyle(fontSize: 14, fontFamily: font),
                     ),
                     const SizedBox(height: 8),
                     TextFormField(
@@ -181,6 +180,7 @@ class _ParentAuthState extends State<ParentAuth> {
                       onChanged: (_) => setState(() {}),
                       decoration: InputDecoration(
                         hintText: 'Re-enter password',
+                        hintStyle: const TextStyle(fontFamily: font),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -192,11 +192,8 @@ class _ParentAuthState extends State<ParentAuth> {
                                 ? Icons.visibility
                                 : Icons.visibility_off,
                           ),
-                          onPressed:
-                              () => setState(() {
-                                _isConfirmPasswordVisible =
-                                    !_isConfirmPasswordVisible;
-                              }),
+                          onPressed: () => setState(() =>
+                              _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
                         ),
                       ),
                     ),
@@ -221,10 +218,11 @@ class _ParentAuthState extends State<ParentAuth> {
                               ),
                               padding: const EdgeInsets.symmetric(vertical: 14),
                             ),
-                            child: Text(
+                            child: const Text(
                               'Reset',
-                              style: GoogleFonts.readexPro(
+                              style: TextStyle(
                                 fontWeight: FontWeight.w500,
+                                fontFamily: font,
                               ),
                             ),
                           ),
@@ -232,10 +230,7 @@ class _ParentAuthState extends State<ParentAuth> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: ElevatedButton(
-                            onPressed:
-                                isFormValid && !_isLoading
-                                    ? _createAccount
-                                    : null,
+                            onPressed: isFormValid && !_isLoading ? _createAccount : null,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF5F40FB),
                               shape: RoundedRectangleBorder(
@@ -243,23 +238,23 @@ class _ParentAuthState extends State<ParentAuth> {
                               ),
                               padding: const EdgeInsets.symmetric(vertical: 14),
                             ),
-                            child:
-                                _isLoading
-                                    ? const SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                    : Text(
-                                      'Next',
-                                      style: GoogleFonts.readexPro(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500,
-                                      ),
+                            child: _isLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
                                     ),
+                                  )
+                                : const Text(
+                                    'Next',
+                                    style: TextStyle(
+                                      fontFamily: font,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
                           ),
                         ),
                       ],

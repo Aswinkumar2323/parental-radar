@@ -14,82 +14,89 @@ class _Feedback2State extends State<Feedback2> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
-    final backgroundColor = isDark ? Colors.black.withOpacity(0.7) : Colors.black.withOpacity(0.5);
-    final containerColor = isDark ? Colors.green[900] : Colors.green[100];
-    final textColor = isDark ? Colors.white : Colors.black;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isMobile = constraints.maxWidth < 600;
 
-    return Center(
-      child: Material(
-        color: backgroundColor,
-        child: Center(
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 24),
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: containerColor,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            width: 400,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  ' How clear and understandable was the process of connecting your child\'s\ devices?',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
+        return Scaffold(
+          backgroundColor: Colors.black.withOpacity(isDark ? 0.7 : 0.5),
+          body: Center(
+            child: Container(
+              margin: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
+              constraints: BoxConstraints(maxWidth: isMobile ? double.infinity : 450),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.grey[900] : Colors.white,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'How clear and understandable was the process of connecting your child\'s devices?',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'NexaBold',
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  'Where 1 = Unclear and 5 = Very Clear ',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14, color: textColor.withOpacity(0.7)),
-                ),
-                const SizedBox(height: 20),
-                Wrap(
-                  spacing: 10,
-                  children: List.generate(5, (index) {
-                    final value = index + 1;
-                    final isSelected = selectedRating == value;
-                    final buttonColor = isSelected
-                        ? (isDark ? Colors.green[400] : Colors.green[800])
-                        : (isDark ? Colors.green[700] : Colors.green);
+                  const SizedBox(height: 12),
+                  Text(
+                    'Where 1 = Unclear and 5 = Very Clear',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'NexaBold',
+                      fontSize: 14,
+                      color: isDark ? Colors.white70 : Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: List.generate(5, (index) {
+                      final value = index + 1;
+                      final isSelected = selectedRating == value;
+                      final buttonColor = isSelected
+                          ? (isDark ? Colors.greenAccent[400] : Colors.green[800])
+                          : (isDark ? Colors.green[700] : Colors.green);
 
-                    return ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: buttonColor,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                      return ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: buttonColor,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          minimumSize: const Size(40, 48),
                         ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 12,
+                        onPressed: () {
+                          setState(() => selectedRating = value);
+                          Future.delayed(const Duration(milliseconds: 300), () {
+                            widget.onComplete(value);
+                          });
+                        },
+                        child: Text(
+                          '$value',
+                          style: const TextStyle(
+                            fontFamily: 'NexaBold',
+                            fontSize: 18,
+                          ),
                         ),
-                      ),
-                      onPressed: () {
-                        setState(() => selectedRating = value);
-                        Future.delayed(const Duration(milliseconds: 300), () {
-                          widget.onComplete(value);
-                        });
-                      },
-                      child: Text(
-                        '$value',
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                    );
-                  }),
-                ),
-              ],
+                      );
+                    }),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

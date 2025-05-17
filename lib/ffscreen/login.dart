@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -86,12 +85,30 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 80),
               Column(
                 children: [
-                  Image.asset('assets/icon/app_icon.png', height: 80),
+                  // ✅ White container behind logo
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 6,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Image.asset(
+                      'assets/icon/app_icon.png',
+                      height: 80,
+                    ),
+                  ),
                   const SizedBox(height: 10),
                   const Text(
                     'ParentalRadar',
                     style: TextStyle(
-                      fontFamily: 'Righteous',
+                      fontFamily: 'NexaBold',
                       fontSize: 28,
                       color: Colors.white,
                     ),
@@ -101,7 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.white70,
-                      fontFamily: 'Righteous',
+                      fontFamily: 'NexaBold',
                     ),
                   ),
                 ],
@@ -146,10 +163,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 20),
                       TextFormField(
                         controller: _emailController,
-                        style: const TextStyle(fontFamily: 'Righteous'),
+                        style: const TextStyle(fontFamily: 'NexaBold'),
                         decoration: InputDecoration(
                           hintText: 'Email',
-                          hintStyle: const TextStyle(fontFamily: 'Righteous'),
+                          hintStyle: const TextStyle(fontFamily: 'NexaBold'),
                           filled: true,
                           fillColor: Colors.grey[100],
                           border: OutlineInputBorder(
@@ -162,10 +179,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       TextFormField(
                         controller: _passwordController,
                         obscureText: !_isPasswordVisible,
-                        style: const TextStyle(fontFamily: 'Righteous'),
+                        style: const TextStyle(fontFamily: 'NexaBold'),
                         decoration: InputDecoration(
                           hintText: 'Password',
-                          hintStyle: const TextStyle(fontFamily: 'Righteous'),
+                          hintStyle: const TextStyle(fontFamily: 'NexaBold'),
                           suffixIcon: IconButton(
                             icon: Icon(_isPasswordVisible
                                 ? Icons.visibility
@@ -203,36 +220,18 @@ class _LoginScreenState extends State<LoginScreen> {
                                 'Sign In',
                                 style: TextStyle(
                                   color: Colors.black,
-                                  fontFamily: 'Righteous',
+                                  fontFamily: 'NexaBold',
                                 ),
                               ),
                       ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'Or sign in with',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontFamily: 'Righteous'),
-                      ),
-                      const SizedBox(height: 12),
-                      OutlinedButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(Icons.g_mobiledata),
-                        label: const Text(
-                          'Continue with Google',
-                          style: TextStyle(fontFamily: 'Righteous'),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          side: const BorderSide(color: Colors.white),
-                        ),
-                      ),
+                    
                       const SizedBox(height: 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Text(
                             "Don't have an account? ",
-                            style: TextStyle(fontFamily: 'Righteous'),
+                            style: TextStyle(fontFamily: 'NexaBold'),
                           ),
                           GestureDetector(
                             onTap: () {
@@ -242,7 +241,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               'Sign Up here',
                               style: TextStyle(
                                 color: Colors.blue,
-                                fontFamily: 'Righteous',
+                                fontFamily: 'NexaBold',
                               ),
                             ),
                           ),

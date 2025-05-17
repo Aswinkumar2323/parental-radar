@@ -151,7 +151,7 @@ class _LocationScreenState extends State<LocationScreen> {
                     ),
                   )
                 : SingleChildScrollView(
-                    padding: const EdgeInsets.only(top: 100, bottom: 30),
+                    padding: const EdgeInsets.only(top: 60, bottom: 30),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

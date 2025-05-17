@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   const EmailVerificationScreen({super.key});
@@ -42,6 +41,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    const font = 'NexaBold';
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -79,16 +80,18 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                   const SizedBox(height: 20),
                   Text(
                     'Verify Your Email',
-                    style: GoogleFonts.righteous(
+                    style: const TextStyle(
+                      fontFamily: font,
                       fontSize: 24,
-                      color: const Color(0xFF123a5b),
+                      color: Color(0xFF123a5b),
                     ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
                   Text(
                     'A verification link has been sent to your email. Once verified, you’ll be redirected automatically.',
-                    style: GoogleFonts.righteous(
+                    style: TextStyle(
+                      fontFamily: font,
                       fontSize: 16,
                       color: Colors.grey[700],
                     ),
@@ -109,9 +112,10 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                         );
                       },
                       icon: const Icon(Icons.refresh, color: Colors.white),
-                      label: Text(
+                      label: const Text(
                         'Resend Email',
-                        style: GoogleFonts.righteous(
+                        style: TextStyle(
+                          fontFamily: font,
                           fontSize: 16,
                           color: Colors.white,
                         ),

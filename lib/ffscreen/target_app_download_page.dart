@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -59,7 +58,7 @@ class TargetAppDownloadPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    const font = 'NexaBold';
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -87,21 +86,24 @@ class TargetAppDownloadPage extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.download_rounded, size: 100, color: Colors.indigo),
+                  const Icon(Icons.download_rounded,
+                      size: 100, color: Colors.indigo),
                   const SizedBox(height: 24),
-                  Text(
+                  const Text(
                     'Download Target App',
-                    style: GoogleFonts.readexPro(
+                    style: TextStyle(
+                      fontFamily: font,
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xFF1C355E),
+                      color: Color(0xFF1C355E),
                     ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
                   Text(
                     'Install the Target App on your child’s device to begin monitoring and managing access.',
-                    style: GoogleFonts.readexPro(
+                    style: TextStyle(
+                      fontFamily: font,
                       fontSize: 16,
                       color: Colors.grey[700],
                     ),
@@ -119,9 +121,10 @@ class TargetAppDownloadPage extends StatelessWidget {
                         Icons.file_download,
                         color: Colors.white,
                       ),
-                      label: Text(
+                      label: const Text(
                         'Download Now',
-                        style: GoogleFonts.readexPro(
+                        style: TextStyle(
+                          fontFamily: font,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -148,8 +151,9 @@ class TargetAppDownloadPage extends StatelessWidget {
                       onPressed: () async {
                         try {
                           final uid = FirebaseAuth.instance.currentUser?.uid;
-                          if (uid == null)
+                          if (uid == null) {
                             throw Exception("User not logged in");
+                          }
 
                           await FirebaseFirestore.instance
                               .collection('users')
@@ -166,9 +170,10 @@ class TargetAppDownloadPage extends StatelessWidget {
                         }
                       },
                       icon: const Icon(Icons.check_circle, color: Colors.white),
-                      label: Text(
+                      label: const Text(
                         'Continue',
-                        style: GoogleFonts.readexPro(
+                        style: TextStyle(
+                          fontFamily: font,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,

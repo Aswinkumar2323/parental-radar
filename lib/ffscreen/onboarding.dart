@@ -139,7 +139,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         Text(
                           'Welcome!',
                           style: TextStyle(
-                            fontFamily: 'Righteous',
+                            fontFamily: 'NexaBold',
                             fontSize: 30,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -253,7 +253,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
           child: Text(
             text,
             style: const TextStyle(
-              fontFamily: 'Righteous',
+              fontFamily: 'NexaBold',
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: Colors.white, // masked by shader
@@ -280,7 +280,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
         child: Text(
           text,
           style: const TextStyle(
-            fontFamily: 'Righteous',
+            fontFamily: 'NexaBold',
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: Colors.white,

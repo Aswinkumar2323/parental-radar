@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 class ParentDetailsForm extends StatefulWidget {
@@ -134,12 +133,13 @@ class _ParentDetailsFormState extends State<ParentDetailsForm> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Parent Form',
-                      style: GoogleFonts.readexPro(
+                      style: TextStyle(
+                        fontFamily: 'NexaBold',
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: const Color(0xFF123a5b),
+                        color: Color(0xFF123a5b),
                       ),
                     ),
                     const SizedBox(height: 30),
@@ -151,7 +151,10 @@ class _ParentDetailsFormState extends State<ParentDetailsForm> {
                       keyboardType: TextInputType.phone,
                     ),
                     const SizedBox(height: 20),
-                    Text('Date of Birth', style: GoogleFonts.readexPro(fontSize: 14)),
+                    const Text(
+                      'Date of Birth',
+                      style: TextStyle(fontFamily: 'NexaBold', fontSize: 14),
+                    ),
                     const SizedBox(height: 8),
                     GestureDetector(
                       onTap: _pickDateOfBirth,
@@ -169,7 +172,7 @@ class _ParentDetailsFormState extends State<ParentDetailsForm> {
                               _selectedDOB != null
                                   ? DateFormat('yyyy-MM-dd').format(_selectedDOB!)
                                   : 'Select Date of Birth',
-                              style: GoogleFonts.readexPro(fontSize: 14),
+                              style: const TextStyle(fontFamily: 'NexaBold', fontSize: 14),
                             ),
                             const Icon(Icons.calendar_today, size: 18),
                           ],
@@ -178,10 +181,16 @@ class _ParentDetailsFormState extends State<ParentDetailsForm> {
                     ),
                     if (_calculatedAge != null) ...[
                       const SizedBox(height: 20),
-                      Text('Age: $_calculatedAge', style: GoogleFonts.readexPro(fontSize: 14)),
+                      Text(
+                        'Age: $_calculatedAge',
+                        style: const TextStyle(fontFamily: 'NexaBold', fontSize: 14),
+                      ),
                     ],
                     const SizedBox(height: 30),
-                    Text('Gender', style: GoogleFonts.readexPro(fontSize: 14)),
+                    const Text(
+                      'Gender',
+                      style: TextStyle(fontFamily: 'NexaBold', fontSize: 14),
+                    ),
                     const SizedBox(height: 8),
                     Row(
                       children: [
@@ -206,9 +215,10 @@ class _ParentDetailsFormState extends State<ParentDetailsForm> {
                         ),
                         child: _isSaving
                             ? const CircularProgressIndicator(color: Colors.white)
-                            : Text(
+                            : const Text(
                                 'Save Details',
-                                style: GoogleFonts.readexPro(
+                                style: TextStyle(
+                                  fontFamily: 'NexaBold',
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
@@ -231,7 +241,7 @@ class _ParentDetailsFormState extends State<ParentDetailsForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: GoogleFonts.readexPro(fontSize: 14)),
+        Text(label, style: const TextStyle(fontFamily: 'NexaBold', fontSize: 14)),
         const SizedBox(height: 8),
         TextFormField(
           controller: controller,
@@ -244,6 +254,7 @@ class _ParentDetailsFormState extends State<ParentDetailsForm> {
               : null,
           decoration: InputDecoration(
             hintText: 'Enter $label',
+            hintStyle: const TextStyle(fontFamily: 'NexaBold'),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             filled: true,
             fillColor: Colors.grey[100],
@@ -270,7 +281,7 @@ class _ParentDetailsFormState extends State<ParentDetailsForm> {
           Flexible(
             child: Text(
               value,
-              style: GoogleFonts.readexPro(fontSize: 14),
+              style: const TextStyle(fontFamily: 'NexaBold', fontSize: 14),
               overflow: TextOverflow.ellipsis,
             ),
           ),

@@ -211,7 +211,7 @@ class _CallScreenState extends State<CallScreen> {
                 'Unknown';
 
             return ListView(
-              padding: const EdgeInsets.only(top: 80, bottom: 16),
+              padding: const EdgeInsets.only(top: 70, bottom: 16),
               children: [
                 _buildCard(
                   isDark: isDark,

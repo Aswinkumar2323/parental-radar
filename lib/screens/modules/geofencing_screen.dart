@@ -197,7 +197,7 @@ class _GeofencingScreenState extends State<GeofencingScreen> {
         child: isLoading
             ? const Center(child: CircularProgressIndicator())
             : Padding(
-                padding: const EdgeInsets.only(top: 100, left: 16, right: 16, bottom: 16),
+                padding: const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 16),
                 child: SingleChildScrollView(
                   child: LayoutBuilder(
                     builder: (context, constraints) {

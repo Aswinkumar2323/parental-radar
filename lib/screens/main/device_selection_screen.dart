@@ -34,12 +34,11 @@ class _DeviceSelectionScreenState extends State<DeviceSelectionScreen> {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
 
-    final snapshot =
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(uid)
-            .collection('devices')
-            .get();
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('devices')
+        .get();
 
     if (snapshot.docs.isNotEmpty) {
       setState(() {
@@ -74,11 +73,10 @@ class _DeviceSelectionScreenState extends State<DeviceSelectionScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder:
-            (_) => DashboardScreen(
-              isDarkMode: widget.isDarkMode,
-              onThemeToggle: widget.onThemeToggle,
-            ),
+        builder: (_) => DashboardScreen(
+          isDarkMode: widget.isDarkMode,
+          onThemeToggle: widget.onThemeToggle,
+        ),
       ),
     );
   }
@@ -87,41 +85,42 @@ class _DeviceSelectionScreenState extends State<DeviceSelectionScreen> {
     await ParentKeyGenerator.generateAndUpload(username);
     showDialog(
       context: context,
-      builder:
-          (_) => AlertDialog(
-            title: const Text('Scan This QR to Link Device'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(
-                  width: 200,
-                  height: 200,
-                  child: QrImageView(data: username),
-                ),
-                const SizedBox(height: 12),
-                Text(username, style: const TextStyle(fontSize: 14)),
-              ],
+      builder: (_) => AlertDialog(
+        title: const Text(
+          'Scan This QR to Link Device',
+          style: TextStyle(fontFamily: 'NexaBold'),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 200,
+              height: 200,
+              child: QrImageView(data: username),
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _saveDeviceToFirestore(username);
-                },
-                child: const Text('Confirm'),
-              ),
-            ],
+            const SizedBox(height: 12),
+            Text(username, style: const TextStyle(fontSize: 14, fontFamily: 'NexaBold')),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel', style: TextStyle(fontFamily: 'NexaBold')),
           ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _saveDeviceToFirestore(username);
+            },
+            child: const Text('Confirm', style: TextStyle(fontFamily: 'NexaBold')),
+          ),
+        ],
+      ),
     );
   }
 
   void _addDevice() {
-    final uniqueName =
-        'device_qer_${Random().nextInt(999999).toString().padLeft(6, '0')}';
+    final uniqueName = 'device_qer_${Random().nextInt(999999).toString().padLeft(6, '0')}';
     _showQRAndConfirm(uniqueName);
   }
 
@@ -148,22 +147,22 @@ class _DeviceSelectionScreenState extends State<DeviceSelectionScreen> {
   void _confirmDeleteDevice(String username) async {
     final confirm = await showDialog<bool>(
       context: context,
-      builder:
-          (_) => AlertDialog(
-            title: const Text('Delete Device'),
-            content: Text('Are you sure you want to remove "$username"?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancel'),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context, true),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
-                child: const Text('Delete'),
-              ),
-            ],
+      builder: (_) => AlertDialog(
+        title: const Text('Delete Device', style: TextStyle(fontFamily: 'NexaBold')),
+        content: Text('Are you sure you want to remove "$username"?',
+            style: const TextStyle(fontFamily: 'NexaBold')),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel', style: TextStyle(fontFamily: 'NexaBold')),
           ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
+            child: const Text('Delete', style: TextStyle(fontFamily: 'NexaBold')),
+          ),
+        ],
+      ),
     );
 
     if (confirm == true) {
@@ -179,7 +178,7 @@ class _DeviceSelectionScreenState extends State<DeviceSelectionScreen> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Connect Your Device'),
+        title: const Text('Connect Your Device', style: TextStyle(fontFamily: 'NexaBold')),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -208,6 +207,7 @@ class _DeviceSelectionScreenState extends State<DeviceSelectionScreen> {
                 const Text(
                   'Connect your child’s device to get started',
                   style: TextStyle(
+                    fontFamily: 'NexaBold',
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -228,11 +228,12 @@ class _DeviceSelectionScreenState extends State<DeviceSelectionScreen> {
                         title: const Text(
                           'Linked Device',
                           style: TextStyle(
+                            fontFamily: 'NexaBold',
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
                         ),
-                        subtitle: Text(deviceId!),
+                        subtitle: Text(deviceId!, style: const TextStyle(fontFamily: 'NexaBold')),
                         trailing: Wrap(
                           spacing: 8,
                           children: [
@@ -261,6 +262,7 @@ class _DeviceSelectionScreenState extends State<DeviceSelectionScreen> {
                         title: const Text(
                           'Add New Device',
                           style: TextStyle(
+                            fontFamily: 'NexaBold',
                             fontWeight: FontWeight.w600,
                             color: Colors.black87,
                           ),
