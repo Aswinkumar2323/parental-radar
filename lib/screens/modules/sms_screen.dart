@@ -42,8 +42,8 @@ class _SmsScreenState extends State<SmsScreen> {
   }
 
   void refresh() => setState(() {
-    smsListFuture = _fetchSmsData();
-  });
+        smsListFuture = _fetchSmsData();
+      });
 
   String _formatDate(String timestamp) {
     try {
@@ -86,6 +86,7 @@ class _SmsScreenState extends State<SmsScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDark ? Colors.black : const Color(0xFFE2E2E2);
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -98,19 +99,18 @@ class _SmsScreenState extends State<SmsScreen> {
           decoration: BoxDecoration(
             color: isDark ? Colors.grey.shade900 : Colors.white,
             borderRadius: BorderRadius.circular(20),
-            boxShadow:
-                isDark
-                    ? null
-                    : [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 4,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
+            boxShadow: isDark
+                ? null
+                : [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
           ),
           child: Text(
-            'SMS Monitoring',
+            'SMS Sensing',
             style: TextStyle(
               fontFamily: 'NexaBold',
               fontSize: 18,
@@ -123,97 +123,77 @@ class _SmsScreenState extends State<SmsScreen> {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: refresh,
-            color: Colors.white,
+            color: isDark ? Colors.white : Colors.black,
           ),
         ],
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.bottomLeft,
-            end: Alignment.topRight,
-            colors:
-                isDark
-                    ? [Colors.black, Colors.black, Colors.black]
-                    : [Color(0xFF0090FF), Color(0xFF15D6A6), Color(0xFF123A5B)],
-          ),
-        ),
-        child: FutureBuilder<List<dynamic>>(
-          future: smsListFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.white, Colors.white],
-                  ),
-                ),
-                child: const Center(child: BreathingLoader()),
-              );
-            }
-            if (!snapshot.hasData || snapshot.hasError) {
-              return const Center(
-                child: Text(
-                  'Failed to load data.',
-                  style: TextStyle(color: Colors.white, fontFamily: 'NexaBold'),
-                ),
-              );
-            }
-
-            final smsList = snapshot.data!;
-            final inbox = _countMessages(smsList, '1');
-            final sent = _countMessages(smsList, '2');
-
-            final contactFreq = <String, int>{};
-            for (var sms in smsList) {
-              final address = sms['address'] ?? 'Unknown';
-              contactFreq[address] = (contactFreq[address] ?? 0) + 1;
-            }
-            final topContact =
-                contactFreq.entries.toList()
-                  ..sort((a, b) => b.value.compareTo(a.value));
-
-            final filteredList =
-                smsList
-                    .where((sms) => _matchesCategory(sms, activeCategory))
-                    .toList()
-                  ..sort(
-                    (a, b) =>
-                        int.parse(b['date']).compareTo(int.parse(a['date'])),
-                  );
-
-            return ListView(
-              padding: const EdgeInsets.fromLTRB(0, kToolbarHeight + 15, 0, 15),
-              children: [
-                const SizedBox(height: 20),
-                _statCard('INCOMING SMS', inbox, true, isDark),
-                const SizedBox(height: 20),
-                _statCard('OUTGOING SMS', sent, false, isDark),
-                const SizedBox(height: 20),
-                _topContactCard(topContact, isDark),
-                const SizedBox(height: 20),
-                _categoryBar(isDark),
-                const SizedBox(height: 20),
-                const Divider(color: Colors.white70),
-                const SizedBox(height: 20),
-                ...filteredList.map(
-                  (sms) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12.0),
-                    child: _smsTile(sms, isDark),
-                  ),
-                ),
-                const SizedBox(height: 20),
-              ],
+      backgroundColor: backgroundColor,
+      body: FutureBuilder<List<dynamic>>(
+        future: smsListFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: BreathingLoader());
+          }
+          if (!snapshot.hasData || snapshot.hasError) {
+            return const Center(
+              child: Text(
+                'Failed to load data.',
+                style: TextStyle(color: Colors.red, fontFamily: 'NexaBold'),
+              ),
             );
-          },
-        ),
+          }
+
+          final smsList = snapshot.data!;
+          final inbox = _countMessages(smsList, '1');
+          final sent = _countMessages(smsList, '2');
+
+          final contactFreq = <String, int>{};
+          for (var sms in smsList) {
+            final address = sms['address'] ?? 'Unknown';
+            contactFreq[address] = (contactFreq[address] ?? 0) + 1;
+          }
+          final topContact = contactFreq.entries.toList()
+            ..sort((a, b) => b.value.compareTo(a.value));
+
+          final filteredList = smsList
+              .where((sms) => _matchesCategory(sms, activeCategory))
+              .toList()
+            ..sort(
+              (a, b) =>
+                  int.parse(b['date']).compareTo(int.parse(a['date'])),
+            );
+
+          return ListView(
+            padding: const EdgeInsets.fromLTRB(0, kToolbarHeight + 15, 0, 15),
+            children: [
+              const SizedBox(height: 20),
+              _statCard('INCOMING SMS', inbox, true, isDark),
+              const SizedBox(height: 20),
+              _statCard('OUTGOING SMS', sent, false, isDark),
+              const SizedBox(height: 20),
+              _topContactCard(topContact, isDark),
+              const SizedBox(height: 20),
+              _categoryBar(isDark),
+              const SizedBox(height: 20),
+              const Divider(color: Colors.grey),
+              const SizedBox(height: 20),
+              ...filteredList.map(
+                (sms) => Padding(
+                  padding: const EdgeInsets.only(bottom: 12.0),
+                  child: _smsTile(sms, isDark),
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+          );
+        },
       ),
     );
   }
 
   Widget _statCard(String title, int count, bool isIncoming, bool isDark) {
     return Card(
-      color: isDark ? Colors.grey.shade900 : Colors.white.withOpacity(0.9),
+      color: isDark ? Colors.grey.shade900 : Colors.white,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
@@ -232,7 +212,8 @@ class _SmsScreenState extends State<SmsScreen> {
         subtitle: LinearProgressIndicator(
           value: (count / 100).clamp(0.0, 1.0),
           color: isIncoming ? Colors.green : Colors.red,
-          backgroundColor: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+          backgroundColor:
+              isDark ? Colors.grey.shade800 : Colors.grey.shade300,
         ),
         trailing: RichText(
           textAlign: TextAlign.end,
@@ -260,10 +241,11 @@ class _SmsScreenState extends State<SmsScreen> {
     );
   }
 
-  Widget _topContactCard(List<MapEntry<String, int>> contacts, bool isDark) {
+  Widget _topContactCard(
+      List<MapEntry<String, int>> contacts, bool isDark) {
     if (contacts.isEmpty) return const SizedBox();
     return Card(
-      color: isDark ? Colors.grey.shade900 : Colors.white.withOpacity(0.9),
+      color: isDark ? Colors.grey.shade900 : Colors.white,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
@@ -300,34 +282,33 @@ class _SmsScreenState extends State<SmsScreen> {
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.all(12),
       child: Row(
-        children:
-            allCategories.map((cat) {
-              return Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: ChoiceChip(
-                  label: Text(
-                    cat,
-                    style: TextStyle(
-                      fontFamily: 'NexaBold',
-                      color: isDark ? Colors.white : Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  selected: cat == activeCategory,
-                  onSelected: (_) => setState(() => activeCategory = cat),
-                  selectedColor: isDark ? Colors.white24 : Colors.white,
-                  backgroundColor:
-                      isDark ? Colors.grey.shade800 : Colors.white70,
+        children: allCategories.map((cat) {
+          return Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: ChoiceChip(
+              label: Text(
+                cat,
+                style: TextStyle(
+                  fontFamily: 'NexaBold',
+                  color: isDark ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.bold,
                 ),
-              );
-            }).toList(),
+              ),
+              selected: cat == activeCategory,
+              onSelected: (_) => setState(() => activeCategory = cat),
+              selectedColor: isDark ? Colors.white24 : Colors.white,
+              backgroundColor:
+                  isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+            ),
+          );
+        }).toList(),
       ),
     );
   }
 
   Widget _smsTile(Map sms, bool isDark) {
     return Card(
-      color: isDark ? Colors.grey.shade900 : Colors.white.withOpacity(0.9),
+      color: isDark ? Colors.grey.shade900 : Colors.white,
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(

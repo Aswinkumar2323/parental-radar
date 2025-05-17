@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../../apis/get.dart'; // For fetchModuleData
+import '../../../apis/get.dart';
 
 class WhatsAppSummaryCard extends StatefulWidget {
   final String username;
@@ -37,40 +37,26 @@ class _WhatsAppSummaryCardState extends State<WhatsAppSummaryCard> {
       userId: widget.username,
     );
 
-    final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
-      decryptedData,
-    );
+    final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(decryptedData);
     final List allMessages = data.expand((e) => e['data']).toList();
 
-    final DateTime now = DateTime.now();
-    final DateTime today = DateTime(now.year, now.month, now.day);
-
-    final todayMessages =
-        allMessages.where((m) {
-          final ts = DateTime.tryParse(m['timestamp'] ?? '');
-          return ts != null && ts.isAfter(today);
-        }).toList();
-
-    incoming = todayMessages.where((m) => m['type'] == 'received').length;
-    outgoing = todayMessages.where((m) => m['type'] == 'sent').length;
+    outgoing = allMessages.where((m) => m['sender'] == "Them").length;
+    incoming = allMessages.where((m) => m['sender'] != "Them").length;
 
     final Map<String, List> groupedByChat = {};
-    for (var msg in todayMessages) {
+    for (var msg in allMessages) {
       final chatName = msg['chat_name'] ?? msg['phone'] ?? 'Unknown';
       groupedByChat.putIfAbsent(chatName, () => []).add(msg);
     }
 
     if (groupedByChat.isNotEmpty) {
-      final sorted =
-          groupedByChat.entries.toList()
-            ..sort((a, b) => b.value.length.compareTo(a.value.length));
+      final sorted = groupedByChat.entries.toList()
+        ..sort((a, b) => b.value.length.compareTo(a.value.length));
       topChatName = sorted.first.key;
       topChatCount = sorted.first.value.length;
     }
 
-    setState(() {
-      loading = false;
-    });
+    setState(() => loading = false);
     widget.onModuleLoaded();
   }
 
@@ -93,14 +79,15 @@ class _WhatsAppSummaryCardState extends State<WhatsAppSummaryCard> {
         ),
         child: Row(
           children: [
-            Icon(icon, color: Colors.blue),
+            Icon(icon, color: Colors.green, size: 24),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
                 '$title\n$subtitle',
                 style: const TextStyle(
+                  fontFamily: 'NexaBold',
                   fontSize: 14,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
@@ -120,42 +107,51 @@ class _WhatsAppSummaryCardState extends State<WhatsAppSummaryCard> {
       color: isDark ? Colors.grey.shade900 : Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child:
-            loading
-                ? const Center(child: CircularProgressIndicator())
-                : Column(
-                  children: [
-                    Row(
-                      children: const [
-                        Icon(FontAwesomeIcons.whatsapp, color: Colors.green),
-                        SizedBox(width: 8),
-                        Text(
-                          'WhatsApp Summary',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+        child: loading
+            ? const Center(child: CircularProgressIndicator())
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: const [
+                      Icon(FontAwesomeIcons.whatsapp, color: Colors.green, size: 20),
+                      SizedBox(width: 8),
+                      Text(
+                        'WhatsApp Summary',
+                        style: TextStyle(
+                          fontFamily: 'NexaBold',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    _buildBasicCard(
-                      context: context,
-                      title: 'Incoming Messages',
-                      subtitle: '$incoming message${incoming == 1 ? '' : 's'}',
-                      icon: Icons.call_received,
-                      onTap: () => widget.onJumpToIndex(6),
-                    ),
-                    const SizedBox(height: 8),
-                    _buildBasicCard(
-                      context: context,
-                      title: 'Outgoing Messages',
-                      subtitle: '$outgoing message${outgoing == 1 ? '' : 's'}',
-                      icon: Icons.call_made,
-                      onTap: () => widget.onJumpToIndex(6),
-                    ),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  _buildBasicCard(
+                    context: context,
+                    title: 'Incoming Messages',
+                    subtitle: '$incoming message${incoming == 1 ? '' : 's'}',
+                    icon: Icons.call_received,
+                    onTap: () => widget.onJumpToIndex(6),
+                  ),
+                  const SizedBox(height: 8),
+                  _buildBasicCard(
+                    context: context,
+                    title: 'Outgoing Messages',
+                    subtitle: '$outgoing message${outgoing == 1 ? '' : 's'}',
+                    icon: Icons.call_made,
+                    onTap: () => widget.onJumpToIndex(6),
+                  ),
+                  const SizedBox(height: 8),
+                  _buildBasicCard(
+                    context: context,
+                    title: 'Top Chat',
+                    subtitle: '$topChatName: $topChatCount msg${topChatCount == 1 ? '' : 's'}',
+                    icon: Icons.person,
+                    onTap: () => widget.onJumpToIndex(6),
+                  ),
+                ],
+              ),
       ),
     );
   }

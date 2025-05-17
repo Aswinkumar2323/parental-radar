@@ -62,18 +62,19 @@ class _TotalInstalledAppsCardState extends State<TotalInstalledAppsCard> {
         borderRadius: BorderRadius.circular(16),
         child: Container(
           padding: const EdgeInsets.all(16),
-          height: 140, // Set height to allow vertical centering
+          height: 140,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  const Icon(Icons.apps, color: Colors.orange),
+                  const Icon(Icons.apps, color: Colors.orange, size: 22),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       'Installed Apps',
                       style: const TextStyle(
+                        fontFamily: 'NexaBold',
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -85,21 +86,21 @@ class _TotalInstalledAppsCardState extends State<TotalInstalledAppsCard> {
               const SizedBox(height: 8),
               Expanded(
                 child: Center(
-                  child:
-                      isLoading
-                          ? const SizedBox(
-                            height: 24,
-                            width: 24,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                          : Text(
-                            'Total: $totalApps',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                              color: isDark ? Colors.white : Colors.black87,
-                            ),
+                  child: isLoading
+                      ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text(
+                          'Total: $totalApps',
+                          style: TextStyle(
+                            fontFamily: 'NexaBold',
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.white : Colors.black87,
                           ),
+                        ),
                 ),
               ),
             ],

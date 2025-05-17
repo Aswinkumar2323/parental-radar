@@ -90,10 +90,9 @@ class _LocationMapCardState extends State<LocationMapCard> {
             title: i == 0 ? 'Latest Location' : 'History',
             snippet: timeLabel,
           ),
-          onTap:
-              () => _mapController?.animateCamera(
-                CameraUpdate.newLatLngZoom(point, 15),
-              ),
+          onTap: () => _mapController?.animateCamera(
+            CameraUpdate.newLatLngZoom(point, 15),
+          ),
         ),
       );
     }
@@ -123,7 +122,6 @@ class _LocationMapCardState extends State<LocationMapCard> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return InkWell(
-      // Wrap the Card with InkWell
       onTap: () {
         widget.onJumpToIndex(1);
       },
@@ -133,55 +131,59 @@ class _LocationMapCardState extends State<LocationMapCard> {
         elevation: 5,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
-          padding: const EdgeInsets.all(8), // Reduced padding here
-          child:
-              _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : _locations.isEmpty
-                  ? const Text('No location data available')
+          padding: const EdgeInsets.all(8),
+          child: _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _locations.isEmpty
+                  ? const Text(
+                      'No location data available',
+                      style: TextStyle(
+                        fontFamily: 'NexaBold',
+                      ),
+                    )
                   : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Live GPS Location',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : Colors.black,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Live GPS Location',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'NexaBold',
+                                color: isDark ? Colors.white : Colors.black,
+                              ),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Last updated: ${_formatRelativeTime(_locations.first['timestamp'])}',
-                        style: TextStyle(
-                          color: Colors.green,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 12), // Reduced height
-                      Expanded(
-                        // Use Expanded to take available height
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: GoogleMap(
-                            initialCameraPosition: CameraPosition(
-                              target: _latestLatLng,
-                              zoom: 13,
-                            ),
-                            markers: _markers,
-                            polylines: _polylines,
-                            onMapCreated:
-                                (controller) => _mapController = controller,
-                            myLocationButtonEnabled: false,
-                            zoomControlsEnabled: true,
-                            onTap: (LatLng latLng) {
-                              // Add onTap for GoogleMap
-                              widget.onJumpToIndex(1);
-                            },
+                        const SizedBox(height: 8),
+                        Text(
+                          'Last updated: ${_formatRelativeTime(_locations.first['timestamp'])}',
+                          style: const TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'NexaBold',
                           ),
                         ),
-                      ),
-                    ],
-                  ),
+                        const SizedBox(height: 12),
+                        Expanded(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: GoogleMap(
+                              initialCameraPosition: CameraPosition(
+                                target: _latestLatLng,
+                                zoom: 13,
+                              ),
+                              markers: _markers,
+                              polylines: _polylines,
+                              onMapCreated: (controller) =>
+                                  _mapController = controller,
+                              myLocationButtonEnabled: false,
+                              zoomControlsEnabled: true,
+                              onTap: (LatLng latLng) {
+                                widget.onJumpToIndex(1);
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
         ),
       ),
     );

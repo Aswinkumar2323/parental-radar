@@ -45,6 +45,8 @@ class _SmsSummaryCardState extends State<SmsSummaryCard> {
     required VoidCallback onTap,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white : Colors.black87;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -59,12 +61,26 @@ class _SmsSummaryCardState extends State<SmsSummaryCard> {
             Icon(icon, color: Colors.blue),
             const SizedBox(width: 12),
             Expanded(
-              child: Text(
-                '$title\n$subtitle',
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontFamily: 'NexaBold',
+                      fontSize: 14,
+                      color: textColor,
+                    ),
+                  ),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontFamily: 'NexaBold',
+                      fontSize: 13,
+                      color: textColor.withOpacity(0.75),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -76,6 +92,8 @@ class _SmsSummaryCardState extends State<SmsSummaryCard> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white : Colors.black87;
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return FutureBuilder<List<dynamic>>(
       future: smsListFuture,
@@ -84,7 +102,15 @@ class _SmsSummaryCardState extends State<SmsSummaryCard> {
           return const Center(child: CircularProgressIndicator());
         }
         if (!snapshot.hasData || snapshot.hasError) {
-          return const Center(child: Text('Unable to load SMS data.'));
+          return Center(
+            child: Text(
+              'Unable to load SMS data.',
+              style: TextStyle(
+                fontFamily: 'NexaBold',
+                color: textColor,
+              ),
+            ),
+          );
         }
 
         final smsList = snapshot.data!;
@@ -111,16 +137,19 @@ class _SmsSummaryCardState extends State<SmsSummaryCard> {
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  children: const [
-                    Icon(Icons.sms, color: Colors.blue),
-                    SizedBox(width: 8),
+                  children: [
+                    const Icon(Icons.sms, color: Colors.blue),
+                    const SizedBox(width: 8),
                     Text(
                       'SMS Summary',
                       style: TextStyle(
+                        fontFamily: 'NexaBold',
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
+                        color: textColor,
                       ),
                     ),
                   ],
@@ -145,8 +174,7 @@ class _SmsSummaryCardState extends State<SmsSummaryCard> {
                 _buildBasicCard(
                   context: context,
                   title: 'Top Contact Today',
-                  subtitle:
-                      '$topName: $topCount msg${topCount == 1 ? '' : 's'}',
+                  subtitle: '$topName: $topCount msg${topCount == 1 ? '' : 's'}',
                   icon: Icons.person,
                   onTap: () => widget.onJumpToIndex(3),
                 ),

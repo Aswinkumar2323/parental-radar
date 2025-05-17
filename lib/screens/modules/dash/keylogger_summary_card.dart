@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../dashboard.dart'; // Import to access _DashboardPageState
-import '../../../apis/get.dart'; // <-- Make sure you have the correct path
+import '../dashboard.dart';
+import '../../../apis/get.dart';
 
 class KeyloggerSummaryCard extends StatefulWidget {
   final String userId;
@@ -37,27 +37,25 @@ class _KeyloggerSummaryCardState extends State<KeyloggerSummaryCard> {
 
     if (rawData == null || rawData is! List) return;
 
-    final allLogs =
-        rawData.expand<Map<String, dynamic>>((entry) {
-          return (entry['data'] as List).map((e) {
-            return {
-              'app': e['app'],
-              'messages': e['messages'],
-              'fetchedTime': e['fetched time'],
-            };
-          });
-        }).toList();
+    final allLogs = rawData.expand<Map<String, dynamic>>((entry) {
+      return (entry['data'] as List).map((e) {
+        return {
+          'app': e['app'],
+          'messages': e['messages'],
+          'fetchedTime': e['fetched time'],
+        };
+      });
+    }).toList();
 
     final today = DateTime.now();
 
-    final todayLogs =
-        allLogs.where((log) {
-          final fetchedTime = DateTime.tryParse(log['fetchedTime'] ?? '');
-          return fetchedTime != null &&
-              fetchedTime.year == today.year &&
-              fetchedTime.month == today.month &&
-              fetchedTime.day == today.day;
-        }).toList();
+    final todayLogs = allLogs.where((log) {
+      final fetchedTime = DateTime.tryParse(log['fetchedTime'] ?? '');
+      return fetchedTime != null &&
+          fetchedTime.year == today.year &&
+          fetchedTime.month == today.month &&
+          fetchedTime.day == today.day;
+    }).toList();
 
     final appUsage = <String, int>{};
     int totalKeys = 0;
@@ -69,18 +67,18 @@ class _KeyloggerSummaryCardState extends State<KeyloggerSummaryCard> {
       totalKeys += messages.length;
     }
 
-    final topAppEntry =
-        appUsage.entries.isNotEmpty
-            ? (appUsage.entries.toList()
-                  ..sort((a, b) => b.value.compareTo(a.value)))
-                .first
-            : const MapEntry('N/A', 0);
+    final topAppEntry = appUsage.entries.isNotEmpty
+        ? (appUsage.entries.toList()
+              ..sort((a, b) => b.value.compareTo(a.value)))
+            .first
+        : const MapEntry('N/A', 0);
 
     setState(() {
       keystrokesToday = totalKeys;
       topApp = topAppEntry.key;
       topAppCount = topAppEntry.value;
     });
+
     widget.onModuleLoaded();
   }
 
@@ -103,15 +101,29 @@ class _KeyloggerSummaryCardState extends State<KeyloggerSummaryCard> {
         ),
         child: Row(
           children: [
-            Icon(icon, color: Colors.blue),
+            Icon(icon, color: Colors.deepPurple),
             const SizedBox(width: 12),
             Expanded(
-              child: Text(
-                '$title\n$subtitle',
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontFamily: 'NexaBold',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: isDark ? Colors.white70 : Colors.black87,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -131,14 +143,19 @@ class _KeyloggerSummaryCardState extends State<KeyloggerSummaryCard> {
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: const [
-                Icon(Icons.keyboard_alt, color: Colors.deepPurple),
+                Icon(Icons.keyboard_alt, color: Colors.deepPurple, size: 22),
                 SizedBox(width: 8),
                 Text(
                   'Keylogger Summary',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontFamily: 'NexaBold',
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),

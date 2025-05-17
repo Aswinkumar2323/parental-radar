@@ -30,22 +30,7 @@ class ChatDetailScreen extends StatelessWidget {
       ),
       extendBodyBehindAppBar: true,
       body: Container(
-        decoration: BoxDecoration(
-          gradient: isDark
-              ? const LinearGradient(
-                  colors: [Colors.black, Colors.black, Colors.black],
-                )
-              : const LinearGradient(
-                  begin: Alignment.bottomLeft,
-                  end: Alignment.topRight,
-                  stops: [0.0, 0.5, 1.0],
-                  colors: [
-                    Color(0xFF0090FF),
-                    Color(0xFF15D6A6),
-                    Color(0xFF123A5B),
-                  ],
-                ),
-        ),
+        color: isDark ? Colors.black : const Color(0xFFE2E2E2),
         child: ListView.builder(
           padding: const EdgeInsets.fromLTRB(12, kToolbarHeight + 16, 12, 20),
           itemCount: messages.length,
@@ -62,17 +47,9 @@ class ChatDetailScreen extends StatelessWidget {
                   maxWidth: MediaQuery.of(context).size.width * 0.75,
                 ),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: isYou
-                        ? (isDark
-                            ? [Colors.blueGrey.shade800, Colors.blueGrey.shade600]
-                            : [Colors.blue.shade100, Colors.blue.shade300])
-                        : (isDark
-                            ? [Colors.grey.shade800, Colors.grey.shade700]
-                            : [Colors.white.withOpacity(0.85), Colors.grey.shade200]),
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  color: isYou
+                      ? (isDark ? Colors.blueGrey.shade800 : Colors.blue.shade100)
+                      : (isDark ? Colors.grey.shade800 : Colors.white),
                   borderRadius: BorderRadius.only(
                     topLeft: const Radius.circular(12),
                     topRight: const Radius.circular(12),

@@ -45,165 +45,123 @@ class _GeofenceCardState extends State<GeofenceCard> {
     }
   }
 
+  Widget _buildDataTile({
+    required BuildContext context,
+    required String label,
+    required String value,
+    required IconData icon,
+    required Color color,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return InkWell(
+      onTap: widget.onJumpToIndex != null ? () => widget.onJumpToIndex!(2) : null,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.grey.shade800 : Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, color: color),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'NexaBold',
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: isDark ? Colors.white70 : Colors.black87,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 400;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final double labelFontSize = isSmallScreen ? 12 : 14;
-    final double valueFontSize = isSmallScreen ? 13 : 15;
-    final double titleFontSize = isSmallScreen ? 16 : 18;
+    final status = geofenceData?['status'] ?? 'Unknown';
+    final lat = geofenceData?['latitude']?.toString() ?? '-';
+    final lng = geofenceData?['longitude']?.toString() ?? '-';
+    final time = geofenceData?['time']?.toString() ?? '-';
+    final regionId = geofenceData?['regionId'];
 
-    final data =
-        geofenceData != null
-            ? {
-              "Status": geofenceData!['status'] ?? "Unknown",
-              "Latitude": geofenceData!['latitude'] ?? "-",
-              "Longitude": geofenceData!['longitude'] ?? "-",
-              "Last Update": geofenceData!['time'] ?? "-",
-            }
-            : {"Status": "No geofence data"};
-
-    final statusColor =
-        geofenceData?['regionId'] == 'inside' ? Colors.green : Colors.red;
+    final statusColor = regionId == 'inside' ? Colors.green : Colors.red;
 
     return Card(
-      elevation: 6,
+      elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       color: isDark ? Colors.grey.shade900 : Colors.white,
-      child: InkWell(
-        onTap:
-            widget.onJumpToIndex != null
-                ? () => widget.onJumpToIndex!(2)
-                : null,
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                "📡 Live Geofence Data",
-                style: TextStyle(
-                  fontSize: titleFontSize,
-                  fontWeight: FontWeight.bold,
-                  color: theme.textTheme.titleMedium?.color,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Row(
+              children: const [
+                Icon(Icons.gps_fixed, color: Colors.orange),
+                SizedBox(width: 8),
+                Text(
+                  'Geofence Summary',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'NexaBold',
+                  ),
                 ),
+              ],
+            ),
+            const SizedBox(height: 5),
+            if (isLoading)
+              const Center(child: CircularProgressIndicator())
+            else ...[
+              _buildDataTile(
+                context: context,
+                label: 'Current Status',
+                value: status,
+                icon: Icons.location_on,
+                color: statusColor,
               ),
-              const SizedBox(height: 12),
-              if (isLoading)
-                const Center(child: CircularProgressIndicator())
-              else
-                isSmallScreen
-                    ? Flexible(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxHeight: MediaQuery.of(context).size.height * 0.4,
-                        ),
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: data.entries.length,
-                          itemBuilder: (context, index) {
-                            final entry = data.entries.elementAt(index);
-                            final isStatus = entry.key == "Status";
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 4),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    width: 100,
-                                    child: Text(
-                                      "${entry.key}:",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: labelFontSize,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(
-                                      entry.value.toString(),
-                                      maxLines: 3,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: valueFontSize,
-                                        color:
-                                            isStatus
-                                                ? statusColor
-                                                : theme
-                                                    .textTheme
-                                                    .bodyMedium
-                                                    ?.color,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    )
-                    : Align(
-                      alignment: Alignment.topLeft,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(
-                            height: 25,
-                          ), // gap between title and data on big devices
-                          ...data.entries.map((entry) {
-                            final isStatus = entry.key == "Status";
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 4),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  SizedBox(
-                                    width: 100,
-                                    child: Text(
-                                      "${entry.key}:",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: labelFontSize,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Flexible(
-                                    child: Text(
-                                      entry.value.toString(),
-                                      maxLines: 3,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: valueFontSize,
-                                        color:
-                                            isStatus
-                                                ? statusColor
-                                                : theme
-                                                    .textTheme
-                                                    .bodyMedium
-                                                    ?.color,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }).toList(),
-                        ],
-                      ),
-                    ),
+              const SizedBox(height: 5),
+              _buildDataTile(
+                context: context,
+                label: 'Last Coordinates',
+                value: 'Lat: $lat, Lng: $lng',
+                icon: Icons.map,
+                color: Colors.blue,
+              ),
+              const SizedBox(height: 5),
+              _buildDataTile(
+                context: context,
+                label: 'Last Updated',
+                value: time,
+                icon: Icons.access_time,
+                color: Colors.deepPurple,
+              ),
             ],
-          ),
+          ],
         ),
       ),
     );

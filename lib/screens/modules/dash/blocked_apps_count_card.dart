@@ -64,44 +64,50 @@ class _BlockedAppsCountCardState extends State<BlockedAppsCountCard> {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      color: isDark ? Colors.grey.shade900 : Colors.white,
+      color: isDark ? Colors.grey.shade900 : const Color.fromARGB(255, 255, 255, 255),
       child: InkWell(
         onTap: () => widget.onJumpToIndex(8),
         borderRadius: BorderRadius.circular(16),
         child: Container(
           padding: const EdgeInsets.all(16),
-          height: 140, // Adjust height as needed
+          height: 140,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                children: const [
-                  Icon(Icons.block, color: Colors.redAccent),
-                  SizedBox(width: 8),
+                children: [
+                  Icon(Icons.block,
+                      color: isDark ? Colors.redAccent.shade100 : Colors.redAccent),
+                  const SizedBox(width: 8),
                   Text(
                     'Blocked Apps',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: 'NexaBold',
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: 8),
               Expanded(
                 child: Center(
-                  child:
-                      isLoading
-                          ? const SizedBox(
-                            height: 24,
-                            width: 24,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                          : Text(
-                            'Active: $blockedAppCount',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                              color: isDark ? Colors.white : Colors.redAccent,
-                            ),
+                  child: isLoading
+                      ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text(
+                          'Active: $blockedAppCount',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontFamily: 'NexaBold',
+                            fontWeight: FontWeight.w500,
+                            color: isDark ? Colors.white : Colors.redAccent,
                           ),
+                        ),
                 ),
               ),
             ],

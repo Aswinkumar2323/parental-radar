@@ -1,3 +1,4 @@
+// your imports remain the same
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -246,7 +247,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                   ),
                   title: Row(
                     children: [
-                      Image.asset('assets/icon/app_icon.png', height: 24),
+                      Image.asset('assets/icon/app_icon.png', height: 30),
                       const SizedBox(width: 6),
                       Flexible(
                         child: Text(
@@ -332,10 +333,17 @@ class _DashboardScreenState extends State<DashboardScreen>
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Image.asset('assets/icon/app_icon.png', height: 30),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Image.asset('assets/icon/app_icon.png', height: 30),
+                                  ],
+                                ),
                                 const SizedBox(width: 10),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,

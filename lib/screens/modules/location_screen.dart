@@ -78,19 +78,18 @@ class _LocationScreenState extends State<LocationScreen> {
           decoration: BoxDecoration(
             color: isDark ? Colors.grey.shade900 : Colors.white,
             borderRadius: BorderRadius.circular(20),
-            boxShadow:
-                isDark
-                    ? null
-                    : [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 4,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
+            boxShadow: isDark
+                ? null
+                : [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
           ),
           child: Text(
-            'GPS Location Tracking',
+            'GPS Location Sensing',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -124,59 +123,42 @@ class _LocationScreenState extends State<LocationScreen> {
         ],
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient:
-              isDark
-                  ? const LinearGradient(colors: [Colors.black, Colors.black])
-                  : const LinearGradient(
-                    begin: Alignment.bottomLeft,
-                    end: Alignment.topRight,
-                    stops: [0.0, 0.5, 1.0],
-                    colors: [
-                      Color(0xFF0090FF),
-                      Color(0xFF15D6A6),
-                      Color(0xFF123A5B),
-                    ],
-                  ),
-        ),
-        child:
-            _isLoading
-                ? Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.white, Colors.white],
-                    ),
-                  ),
-                  child: const Center(child: BreathingLoader()),
-                )
-                : latest == null
-                ? const Center(
-                  child: Text(
-                    'No location data available',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'NexaBold',
-                    ),
-                  ),
-                )
-                : SingleChildScrollView(
-                  padding: const EdgeInsets.only(top: 100, bottom: 30),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildLatestCard(
-                        latest['data'],
-                        latest['timestamp'],
-                        isDark,
-                      ).animate().fade(duration: 500.ms).moveY(),
-                      const SizedBox(height: 16),
-                      _buildHistoryList(
-                        history,
-                        isDark,
-                      ).animate().fade(duration: 500.ms).moveY(delay: 200.ms),
-                    ],
-                  ),
+        color: isDark ? Colors.black : const Color(0xFFE2E2E2),
+        child: _isLoading
+            ? Center(
+                child: Container(
+                  color: isDark ? Colors.black : const Color(0xFFE2E2E2),
+                  child: const BreathingLoader(),
                 ),
+              )
+            : latest == null
+                ? Center(
+                    child: Text(
+                      'No location data available',
+                      style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black87,
+                        fontFamily: 'NexaBold',
+                      ),
+                    ),
+                  )
+                : SingleChildScrollView(
+                    padding: const EdgeInsets.only(top: 100, bottom: 30),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildLatestCard(
+                          latest['data'],
+                          latest['timestamp'],
+                          isDark,
+                        ).animate().fade(duration: 500.ms).moveY(),
+                        const SizedBox(height: 16),
+                        _buildHistoryList(history, isDark)
+                            .animate()
+                            .fade(duration: 500.ms)
+                            .moveY(delay: 200.ms),
+                      ],
+                    ),
+                  ),
       ),
     );
   }
@@ -189,7 +171,7 @@ class _LocationScreenState extends State<LocationScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Card(
-        color: isDark ? Colors.grey.shade900 : Colors.white.withOpacity(0.9),
+        color: isDark ? Colors.grey.shade900 : Colors.white,
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Padding(
@@ -260,7 +242,7 @@ class _LocationScreenState extends State<LocationScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Card(
-        color: isDark ? Colors.grey.shade900 : Colors.white.withOpacity(0.9),
+        color: isDark ? Colors.grey.shade900 : Colors.white,
         elevation: 3,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Padding(
@@ -299,7 +281,8 @@ class _LocationScreenState extends State<LocationScreen> {
                         'Lat: ${d['lat']}  |  Lng: ${d['lng']}',
                         style: TextStyle(
                           fontFamily: 'NexaBold',
-                          color: isDark ? Colors.white54 : Colors.grey[700],
+                          color:
+                              isDark ? Colors.white54 : Colors.grey.shade700,
                         ),
                       ),
                       const Divider(color: Colors.grey),

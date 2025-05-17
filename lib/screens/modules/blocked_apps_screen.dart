@@ -299,7 +299,7 @@ class _BlockedAppsScreenState extends State<BlockedAppsScreen> {
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
-            'Blocked Apps',
+            'App Blocking',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,

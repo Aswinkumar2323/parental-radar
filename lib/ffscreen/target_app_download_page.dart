@@ -109,7 +109,7 @@ class TargetAppDownloadPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   const Text(
-                    'Download Target App',
+                    'Download Child Data Sensing App',
                     style: TextStyle(
                       fontFamily: font,
                       fontSize: 26,

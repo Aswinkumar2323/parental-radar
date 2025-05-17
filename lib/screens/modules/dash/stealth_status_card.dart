@@ -32,32 +32,33 @@ class _StealthStatusCardState extends State<StealthStatusCard> {
       module: 'stealth',
       userId: widget.username,
     );
+
     setState(() {
       isStealthEnabled = result?['data']?['stealth'] ?? false;
       isLoading = false;
     });
+
     widget.onModuleLoaded();
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final iconColor =
-        isStealthEnabled == true
-            ? Colors.blueAccent
-            : const Color.fromARGB(255, 255, 64, 64);
+    final Color iconColor = isStealthEnabled == true
+        ? Colors.blueAccent
+        : const Color.fromARGB(255, 255, 64, 64);
 
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      color: isDark ? Colors.grey.shade900 : Colors.white,
-      child: InkWell(
-        onTap: () => widget.onJumpToIndex(9),
-        borderRadius: BorderRadius.circular(16),
+    return InkWell(
+      onTap: () => widget.onJumpToIndex(9),
+      borderRadius: BorderRadius.circular(16),
+      child: Card(
+        elevation: 5,
+        color: isDark ? Colors.grey.shade900 : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Icon(
                 isStealthEnabled == true
@@ -66,31 +67,31 @@ class _StealthStatusCardState extends State<StealthStatusCard> {
                 size: 36,
                 color: iconColor,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
               Text(
                 "Stealth Mode",
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black87,
+                  fontFamily: 'NexaBold',
+                  color: isDark ? Colors.white : Colors.black,
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6),
               isLoading
                   ? const SizedBox(
-                    height: 16,
-                    width: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
                   : Text(
-                    isStealthEnabled == true ? "ON" : "OFF",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: iconColor,
+                      isStealthEnabled == true ? "ON" : "OFF",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontFamily: 'NexaBold',
+                        color: iconColor,
+                      ),
                     ),
-                  ),
             ],
           ),
         ),

@@ -29,14 +29,14 @@ class _SideBarState extends State<SideBar> {
 
   final List<String> items = [
     'Dashboard',
-    'GPS Location Tracking',
+    'GPS Location Sensing',
     'Geofencing',
-    'SMS Monitoring',
-    'Call Monitoring',
+    'SMS Sensing',
+    'Call Log Sensing',
     'Keylogger',
-    'WhatsApp Monitoring',
+    'WhatsApp Sensing',
     'Installed Apps',
-    'Blocked Apps',
+    'App Blocking',
     'Stealth Mode',
   ];
 
