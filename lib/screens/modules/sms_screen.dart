@@ -4,6 +4,7 @@ import '../../apis/get.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:collection/collection.dart';
 import '../../decryption/parent_decryption.dart';
+import '../../widgets/breathing_loader.dart';
 
 class SmsScreen extends StatefulWidget {
   final String username;
@@ -41,8 +42,8 @@ class _SmsScreenState extends State<SmsScreen> {
   }
 
   void refresh() => setState(() {
-        smsListFuture = _fetchSmsData();
-      });
+    smsListFuture = _fetchSmsData();
+  });
 
   String _formatDate(String timestamp) {
     try {
@@ -97,15 +98,16 @@ class _SmsScreenState extends State<SmsScreen> {
           decoration: BoxDecoration(
             color: isDark ? Colors.grey.shade900 : Colors.white,
             borderRadius: BorderRadius.circular(20),
-            boxShadow: isDark
-                ? null
-                : [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
+            boxShadow:
+                isDark
+                    ? null
+                    : [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
           ),
           child: Text(
             'SMS Monitoring',
@@ -130,17 +132,23 @@ class _SmsScreenState extends State<SmsScreen> {
           gradient: LinearGradient(
             begin: Alignment.bottomLeft,
             end: Alignment.topRight,
-            colors: isDark
-                ? [Colors.black, Colors.black, Colors.black]
-                : [Color(0xFF0090FF), Color(0xFF15D6A6), Color(0xFF123A5B)],
+            colors:
+                isDark
+                    ? [Colors.black, Colors.black, Colors.black]
+                    : [Color(0xFF0090FF), Color(0xFF15D6A6), Color(0xFF123A5B)],
           ),
         ),
         child: FutureBuilder<List<dynamic>>(
           future: smsListFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(color: Colors.white),
+              return Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.white, Colors.white],
+                  ),
+                ),
+                child: const Center(child: BreathingLoader()),
               );
             }
             if (!snapshot.hasData || snapshot.hasError) {
@@ -161,14 +169,18 @@ class _SmsScreenState extends State<SmsScreen> {
               final address = sms['address'] ?? 'Unknown';
               contactFreq[address] = (contactFreq[address] ?? 0) + 1;
             }
-            final topContact = contactFreq.entries.toList()
-              ..sort((a, b) => b.value.compareTo(a.value));
+            final topContact =
+                contactFreq.entries.toList()
+                  ..sort((a, b) => b.value.compareTo(a.value));
 
-            final filteredList = smsList
-                .where((sms) => _matchesCategory(sms, activeCategory))
-                .toList()
-              ..sort((a, b) =>
-                  int.parse(b['date']).compareTo(int.parse(a['date'])));
+            final filteredList =
+                smsList
+                    .where((sms) => _matchesCategory(sms, activeCategory))
+                    .toList()
+                  ..sort(
+                    (a, b) =>
+                        int.parse(b['date']).compareTo(int.parse(a['date'])),
+                  );
 
             return ListView(
               padding: const EdgeInsets.fromLTRB(0, kToolbarHeight + 15, 0, 15),
@@ -184,10 +196,12 @@ class _SmsScreenState extends State<SmsScreen> {
                 const SizedBox(height: 20),
                 const Divider(color: Colors.white70),
                 const SizedBox(height: 20),
-                ...filteredList.map((sms) => Padding(
-                      padding: const EdgeInsets.only(bottom: 12.0),
-                      child: _smsTile(sms, isDark),
-                    )),
+                ...filteredList.map(
+                  (sms) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12.0),
+                    child: _smsTile(sms, isDark),
+                  ),
+                ),
                 const SizedBox(height: 20),
               ],
             );
@@ -256,15 +270,25 @@ class _SmsScreenState extends State<SmsScreen> {
         leading: const CircleAvatar(child: Icon(Icons.person)),
         title: Text(
           'Top Contact Today',
-          style: TextStyle(fontFamily: 'NexaBold', color: isDark ? Colors.white : Colors.black),
+          style: TextStyle(
+            fontFamily: 'NexaBold',
+            color: isDark ? Colors.white : Colors.black,
+          ),
         ),
         subtitle: Text(
           contacts.first.key,
-          style: TextStyle(fontFamily: 'NexaBold', color: isDark ? Colors.white70 : Colors.black87),
+          style: TextStyle(
+            fontFamily: 'NexaBold',
+            color: isDark ? Colors.white70 : Colors.black87,
+          ),
         ),
         trailing: Text(
           '${contacts.first.value} msgs',
-          style: TextStyle(fontFamily: 'NexaBold', fontSize: 16, color: isDark ? Colors.white : Colors.black),
+          style: TextStyle(
+            fontFamily: 'NexaBold',
+            fontSize: 16,
+            color: isDark ? Colors.white : Colors.black,
+          ),
         ),
       ),
     );
@@ -276,25 +300,27 @@ class _SmsScreenState extends State<SmsScreen> {
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.all(12),
       child: Row(
-        children: allCategories.map((cat) {
-          return Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: ChoiceChip(
-              label: Text(
-                cat,
-                style: TextStyle(
-                  fontFamily: 'NexaBold',
-                  color: isDark ? Colors.white : Colors.black,
-                  fontWeight: FontWeight.bold,
+        children:
+            allCategories.map((cat) {
+              return Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: ChoiceChip(
+                  label: Text(
+                    cat,
+                    style: TextStyle(
+                      fontFamily: 'NexaBold',
+                      color: isDark ? Colors.white : Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  selected: cat == activeCategory,
+                  onSelected: (_) => setState(() => activeCategory = cat),
+                  selectedColor: isDark ? Colors.white24 : Colors.white,
+                  backgroundColor:
+                      isDark ? Colors.grey.shade800 : Colors.white70,
                 ),
-              ),
-              selected: cat == activeCategory,
-              onSelected: (_) => setState(() => activeCategory = cat),
-              selectedColor: isDark ? Colors.white24 : Colors.white,
-              backgroundColor: isDark ? Colors.grey.shade800 : Colors.white70,
-            ),
-          );
-        }).toList(),
+              );
+            }).toList(),
       ),
     );
   }
@@ -311,20 +337,29 @@ class _SmsScreenState extends State<SmsScreen> {
         ),
         title: Text(
           sms['address'] ?? 'Unknown',
-          style: TextStyle(fontFamily: 'NexaBold', color: isDark ? Colors.white : Colors.black),
+          style: TextStyle(
+            fontFamily: 'NexaBold',
+            color: isDark ? Colors.white : Colors.black,
+          ),
         ),
         subtitle: Text(
           sms['body'] ?? '',
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(fontFamily: 'NexaBold', color: isDark ? Colors.white70 : Colors.black87),
+          style: TextStyle(
+            fontFamily: 'NexaBold',
+            color: isDark ? Colors.white70 : Colors.black87,
+          ),
         ),
         trailing: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
               _smsType(sms['type']),
-              style: TextStyle(fontFamily: 'NexaBold', color: isDark ? Colors.white70 : Colors.black),
+              style: TextStyle(
+                fontFamily: 'NexaBold',
+                color: isDark ? Colors.white70 : Colors.black,
+              ),
             ),
             Text(
               _formatDate(sms['date'].toString()),

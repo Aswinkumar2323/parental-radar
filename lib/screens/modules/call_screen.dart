@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../apis/get.dart';
 import 'package:collection/collection.dart';
 import '../../decryption/parent_decryption.dart';
+import '../../widgets/breathing_loader.dart';
 
 class CallScreen extends StatefulWidget {
   final String username;
@@ -25,7 +26,10 @@ class _CallScreenState extends State<CallScreen> {
   }
 
   Future<List<dynamic>> _fetchCallLogs() async {
-    final apidata = await fetchModuleData(module: 'call', userId: widget.username);
+    final apidata = await fetchModuleData(
+      module: 'call',
+      userId: widget.username,
+    );
     final data = await ParentDecryption.decrypt(apidata, widget.username);
     _allCalls = data?['data']?['call_data'] ?? [];
     return _allCalls;
@@ -114,15 +118,16 @@ class _CallScreenState extends State<CallScreen> {
           decoration: BoxDecoration(
             color: isDark ? Colors.grey.shade900 : Colors.white,
             borderRadius: BorderRadius.circular(20),
-            boxShadow: isDark
-                ? null
-                : [
-                    const BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
+            boxShadow:
+                isDark
+                    ? null
+                    : [
+                      const BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
           ),
           child: const Text(
             'Call Monitoring',
@@ -134,32 +139,42 @@ class _CallScreenState extends State<CallScreen> {
           ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: refresh,
-          ),
+          IconButton(icon: const Icon(Icons.refresh), onPressed: refresh),
         ],
       ),
       body: Container(
         decoration: BoxDecoration(
-          gradient: isDark
-              ? const LinearGradient(
-                  begin: Alignment.bottomLeft,
-                  end: Alignment.topRight,
-                  colors: [Colors.black, Colors.black, Colors.black],
-                )
-              : const LinearGradient(
-                  begin: Alignment.bottomLeft,
-                  end: Alignment.topRight,
-                  colors: [Color(0xFF0090FF), Color(0xFF15D6A6), Color(0xFF123A5B)],
-                ),
+          gradient:
+              isDark
+                  ? const LinearGradient(
+                    begin: Alignment.bottomLeft,
+                    end: Alignment.topRight,
+                    colors: [Colors.black, Colors.black, Colors.black],
+                  )
+                  : const LinearGradient(
+                    begin: Alignment.bottomLeft,
+                    end: Alignment.topRight,
+                    colors: [
+                      Color(0xFF0090FF),
+                      Color(0xFF15D6A6),
+                      Color(0xFF123A5B),
+                    ],
+                  ),
         ),
         child: FutureBuilder<List<dynamic>>(
           future: callLogsFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator(color: Colors.white));
+              return Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.white, Colors.white],
+                  ),
+                ),
+                child: const Center(child: BreathingLoader()),
+              );
             }
+
             if (snapshot.hasError || snapshot.data == null) {
               return const Center(
                 child: Text(
@@ -172,58 +187,75 @@ class _CallScreenState extends State<CallScreen> {
             final calls = _getFilteredCalls();
             final today = DateTime.now();
 
-            final todayCalls = _allCalls.where((c) {
-              final date = DateTime.tryParse(c['date'] ?? '') ?? DateTime(2000);
-              return date.year == today.year &&
-                  date.month == today.month &&
-                  date.day == today.day;
-            }).toList();
+            final todayCalls =
+                _allCalls.where((c) {
+                  final date =
+                      DateTime.tryParse(c['date'] ?? '') ?? DateTime(2000);
+                  return date.year == today.year &&
+                      date.month == today.month &&
+                      date.day == today.day;
+                }).toList();
 
             final incomingToday =
                 todayCalls.where((c) => c['callType'] == 'incoming').toList();
             final outgoingToday =
                 todayCalls.where((c) => c['callType'] == 'outgoing').toList();
 
-            final avgIncoming = incomingToday.isNotEmpty
-                ? incomingToday.map((c) => c['duration']).reduce((a, b) => a + b) ~/
-                    incomingToday.length
-                : 0;
+            final avgIncoming =
+                incomingToday.isNotEmpty
+                    ? incomingToday
+                            .map((c) => c['duration'])
+                            .reduce((a, b) => a + b) ~/
+                        incomingToday.length
+                    : 0;
 
-            final avgOutgoing = outgoingToday.isNotEmpty
-                ? outgoingToday.map((c) => c['duration']).reduce((a, b) => a + b) ~/
-                    outgoingToday.length
-                : 0;
+            final avgOutgoing =
+                outgoingToday.isNotEmpty
+                    ? outgoingToday
+                            .map((c) => c['duration'])
+                            .reduce((a, b) => a + b) ~/
+                        outgoingToday.length
+                    : 0;
 
-            final longest = _allCalls.isNotEmpty
-                ? _allCalls.reduce(
-                    (a, b) => (a['duration'] ?? 0) > (b['duration'] ?? 0) ? a : b)
-                : null;
+            final longest =
+                _allCalls.isNotEmpty
+                    ? _allCalls.reduce(
+                      (a, b) =>
+                          (a['duration'] ?? 0) > (b['duration'] ?? 0) ? a : b,
+                    )
+                    : null;
 
             final frequency = <String, int>{};
             for (var log in _allCalls) {
               final name = log['name'] ?? log['number'] ?? 'Unknown';
               frequency[name] = (frequency[name] ?? 0) + 1;
             }
-            final mostFrequent = (frequency.entries.toList()
-                  ..sort((a, b) => b.value.compareTo(a.value)))
-                .firstOrNull
-                ?.key ??
+            final mostFrequent =
+                (frequency.entries.toList()
+                      ..sort((a, b) => b.value.compareTo(a.value)))
+                    .firstOrNull
+                    ?.key ??
                 'Unknown';
 
             return ListView(
-              padding: const EdgeInsets.only(top: 70, bottom: 16),
+              padding: const EdgeInsets.only(top: 80, bottom: 16),
               children: [
                 _buildCard(
                   isDark: isDark,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("Today's Incoming Calls",
-                          style: TextStyle(fontSize: 16, fontFamily: 'NexaBold')),
-                      Text('${incomingToday.length} Calls',
-                          style: TextStyle(
-                              fontFamily: 'NexaBold',
-                              color: isDark ? Colors.white : Colors.black)),
+                      const Text(
+                        "Today's Incoming Calls",
+                        style: TextStyle(fontSize: 16, fontFamily: 'NexaBold'),
+                      ),
+                      Text(
+                        '${incomingToday.length} Calls',
+                        style: TextStyle(
+                          fontFamily: 'NexaBold',
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -232,12 +264,17 @@ class _CallScreenState extends State<CallScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("Today's Outgoing Calls",
-                          style: TextStyle(fontSize: 16, fontFamily: 'NexaBold')),
-                      Text('${outgoingToday.length} Calls',
-                          style: TextStyle(
-                              fontFamily: 'NexaBold',
-                              color: isDark ? Colors.white : Colors.black)),
+                      const Text(
+                        "Today's Outgoing Calls",
+                        style: TextStyle(fontSize: 16, fontFamily: 'NexaBold'),
+                      ),
+                      Text(
+                        '${outgoingToday.length} Calls',
+                        style: TextStyle(
+                          fontFamily: 'NexaBold',
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -246,12 +283,17 @@ class _CallScreenState extends State<CallScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("Avg Incoming Duration",
-                          style: TextStyle(fontSize: 16, fontFamily: 'NexaBold')),
-                      Text(_formatDuration(avgIncoming),
-                          style: TextStyle(
-                              fontFamily: 'NexaBold',
-                              color: isDark ? Colors.white : Colors.black)),
+                      const Text(
+                        "Avg Incoming Duration",
+                        style: TextStyle(fontSize: 16, fontFamily: 'NexaBold'),
+                      ),
+                      Text(
+                        _formatDuration(avgIncoming),
+                        style: TextStyle(
+                          fontFamily: 'NexaBold',
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -260,12 +302,17 @@ class _CallScreenState extends State<CallScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("Avg Outgoing Duration",
-                          style: TextStyle(fontSize: 16, fontFamily: 'NexaBold')),
-                      Text(_formatDuration(avgOutgoing),
-                          style: TextStyle(
-                              fontFamily: 'NexaBold',
-                              color: isDark ? Colors.white : Colors.black)),
+                      const Text(
+                        "Avg Outgoing Duration",
+                        style: TextStyle(fontSize: 16, fontFamily: 'NexaBold'),
+                      ),
+                      Text(
+                        _formatDuration(avgOutgoing),
+                        style: TextStyle(
+                          fontFamily: 'NexaBold',
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -275,17 +322,28 @@ class _CallScreenState extends State<CallScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text("Longest Call",
-                            style: TextStyle(fontSize: 16, fontFamily: 'NexaBold')),
+                        const Text(
+                          "Longest Call",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'NexaBold',
+                          ),
+                        ),
                         const SizedBox(height: 8),
-                        Text("With: ${longest['name'] ?? longest['number'] ?? 'Unknown'}",
-                            style: TextStyle(
-                                fontFamily: 'NexaBold',
-                                color: isDark ? Colors.white : Colors.black)),
-                        Text("Duration: ${_formatDuration(longest['duration'])}",
-                            style: TextStyle(
-                                fontFamily: 'NexaBold',
-                                color: isDark ? Colors.white70 : Colors.black87)),
+                        Text(
+                          "With: ${longest['name'] ?? longest['number'] ?? 'Unknown'}",
+                          style: TextStyle(
+                            fontFamily: 'NexaBold',
+                            color: isDark ? Colors.white : Colors.black,
+                          ),
+                        ),
+                        Text(
+                          "Duration: ${_formatDuration(longest['duration'])}",
+                          style: TextStyle(
+                            fontFamily: 'NexaBold',
+                            color: isDark ? Colors.white70 : Colors.black87,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -294,12 +352,17 @@ class _CallScreenState extends State<CallScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("Most Frequent Contact",
-                          style: TextStyle(fontSize: 16, fontFamily: 'NexaBold')),
-                      Text(mostFrequent,
-                          style: TextStyle(
-                              fontFamily: 'NexaBold',
-                              color: isDark ? Colors.white : Colors.black)),
+                      const Text(
+                        "Most Frequent Contact",
+                        style: TextStyle(fontSize: 16, fontFamily: 'NexaBold'),
+                      ),
+                      Text(
+                        mostFrequent,
+                        style: TextStyle(
+                          fontFamily: 'NexaBold',
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -320,23 +383,26 @@ class _CallScreenState extends State<CallScreen> {
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.all(12),
       child: Row(
-        children: filters.map((type) {
-          return Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: ChoiceChip(
-              label: Text(
-                type.toUpperCase(),
-                style: TextStyle(
-                    fontFamily: 'NexaBold',
-                    color: isDark ? Colors.white : Colors.black),
-              ),
-              selected: type == _selectedFilter,
-              onSelected: (_) => _filterCalls(type),
-              selectedColor: isDark ? Colors.white24 : Colors.white,
-              backgroundColor: isDark ? Colors.grey.shade800 : Colors.white70,
-            ),
-          );
-        }).toList(),
+        children:
+            filters.map((type) {
+              return Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: ChoiceChip(
+                  label: Text(
+                    type.toUpperCase(),
+                    style: TextStyle(
+                      fontFamily: 'NexaBold',
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  selected: type == _selectedFilter,
+                  onSelected: (_) => _filterCalls(type),
+                  selectedColor: isDark ? Colors.white24 : Colors.white,
+                  backgroundColor:
+                      isDark ? Colors.grey.shade800 : Colors.white70,
+                ),
+              );
+            }).toList(),
       ),
     );
   }
@@ -349,16 +415,24 @@ class _CallScreenState extends State<CallScreen> {
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: isDark ? Colors.white10 : Colors.blue.shade100,
-          child: Icon(_getCallIcon(call['callType']),
-              color: _getCallColor(call['callType'] ?? '')),
+          child: Icon(
+            _getCallIcon(call['callType']),
+            color: _getCallColor(call['callType'] ?? ''),
+          ),
         ),
         title: Text(
           call['name'] ?? call['number'] ?? 'Unknown',
-          style: TextStyle(fontFamily: 'NexaBold', color: isDark ? Colors.white : Colors.black),
+          style: TextStyle(
+            fontFamily: 'NexaBold',
+            color: isDark ? Colors.white : Colors.black,
+          ),
         ),
         subtitle: Text(
           'Duration: ${_formatDuration(call['duration'] ?? 0)}',
-          style: TextStyle(fontFamily: 'NexaBold', color: isDark ? Colors.white70 : Colors.black87),
+          style: TextStyle(
+            fontFamily: 'NexaBold',
+            color: isDark ? Colors.white70 : Colors.black87,
+          ),
         ),
         trailing: Text(
           _formatDate(call['date'] ?? ''),

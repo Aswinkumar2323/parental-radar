@@ -32,10 +32,8 @@ class _ParentAuthState extends State<ParentAuth> {
     setState(() => _isLoading = true);
 
     try {
-      final authResult = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      final authResult = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
 
       final user = authResult.user;
 
@@ -56,7 +54,9 @@ class _ParentAuthState extends State<ParentAuth> {
         errorMsg = 'Invalid email address';
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMsg)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMsg)),
+      );
     } finally {
       setState(() => _isLoading = false);
     }
@@ -72,199 +72,180 @@ class _ParentAuthState extends State<ParentAuth> {
 
   @override
   Widget build(BuildContext context) {
-    const font = 'NexaBold';
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 600;
 
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF0090ff), Color(0xFF15D6A6), Color(0xFFF2F8FF)],
-          ),
-        ),
-        child: Center(
-          child: SingleChildScrollView(
-            child: Container(
-              padding: const EdgeInsets.all(24),
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.95),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 10,
-                    offset: Offset(0, 4),
-                  ),
-                ],
+      backgroundColor: const Color(0xFFE2E2E2),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final content = Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 10),
+              Image.asset(
+                'assets/icon/Final logo-01.png',
+                width: 200,
+                height: 60,
+                fit: BoxFit.contain,
               ),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 500),
+              const SizedBox(height: 10),
+              Container(
+                width: isMobile ? screenWidth * 0.88 : 460,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 28,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF5F5F5),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 10,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Create Your Account',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        fontFamily: font,
+                        fontFamily: 'NexaBold',
                         color: Color(0xFF123a5b),
                       ),
                     ),
-                    const SizedBox(height: 30),
-
-                    Text(
+                    const SizedBox(height: 24),
+                    const Text(
                       'Email Address',
-                      style: const TextStyle(fontSize: 14, fontFamily: font),
+                      style: TextStyle(
+                        fontFamily: 'NexaBold',
+                        fontSize: 14,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _emailController,
                       onChanged: (_) => setState(() {}),
+                      style: const TextStyle(fontFamily: 'NexaBold'),
                       decoration: InputDecoration(
                         hintText: 'Enter your email',
-                        hintStyle: const TextStyle(fontFamily: font),
+                        hintStyle: const TextStyle(fontFamily: 'NexaBold'),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                         filled: true,
-                        fillColor: Colors.grey[100],
+                        fillColor: Colors.white,
                       ),
                     ),
-
                     const SizedBox(height: 20),
-
-                    Text(
+                    const Text(
                       'Create Password',
-                      style: const TextStyle(fontSize: 14, fontFamily: font),
+                      style: TextStyle(
+                        fontFamily: 'NexaBold',
+                        fontSize: 14,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _passwordController,
                       obscureText: !_isPasswordVisible,
                       onChanged: (_) => setState(() {}),
+                      style: const TextStyle(fontFamily: 'NexaBold'),
                       decoration: InputDecoration(
                         hintText: 'Enter password',
-                        hintStyle: const TextStyle(fontFamily: font),
+                        hintStyle: const TextStyle(fontFamily: 'NexaBold'),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                         filled: true,
-                        fillColor: Colors.grey[100],
+                        fillColor: Colors.white,
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _isPasswordVisible
-                                ? Icons.visibility
-                                : Icons.visibility_off,
+                            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
                           ),
                           onPressed: () =>
                               setState(() => _isPasswordVisible = !_isPasswordVisible),
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 20),
-
-                    Text(
+                    const Text(
                       'Confirm Password',
-                      style: const TextStyle(fontSize: 14, fontFamily: font),
+                      style: TextStyle(
+                        fontFamily: 'NexaBold',
+                        fontSize: 14,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _confirmPasswordController,
                       obscureText: !_isConfirmPasswordVisible,
                       onChanged: (_) => setState(() {}),
+                      style: const TextStyle(fontFamily: 'NexaBold'),
                       decoration: InputDecoration(
                         hintText: 'Re-enter password',
-                        hintStyle: const TextStyle(fontFamily: font),
+                        hintStyle: const TextStyle(fontFamily: 'NexaBold'),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                         filled: true,
-                        fillColor: Colors.grey[100],
+                        fillColor: Colors.white,
                         suffixIcon: IconButton(
                           icon: Icon(
                             _isConfirmPasswordVisible
                                 ? Icons.visibility
                                 : Icons.visibility_off,
                           ),
-                          onPressed: () => setState(() =>
-                              _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
+                          onPressed: () => setState(
+                              () => _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 30),
-
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: () {
-                              _emailController.clear();
-                              _passwordController.clear();
-                              _confirmPasswordController.clear();
-                              setState(() {});
-                            },
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: const Color(0xFF0090ff),
-                              side: const BorderSide(color: Color(0xFF0090ff)),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                            ),
-                            child: const Text(
-                              'Reset',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontFamily: font,
-                              ),
-                            ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: isFormValid && !_isLoading ? _createAccount : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF0090FF),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: isFormValid && !_isLoading ? _createAccount : null,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF5F40FB),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                        child: _isLoading
+                            ? const CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              )
+                            : const Text(
+                                'Sign Up',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontFamily: 'NexaBold',
+                                ),
                               ),
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                            ),
-                            child: _isLoading
-                                ? const SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : const Text(
-                                    'Next',
-                                    style: TextStyle(
-                                      fontFamily: font,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
               ),
-            ),
-          ),
-        ),
+            ],
+          );
+
+          return constraints.maxHeight < 750
+              ? SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(vertical: 40),
+                  child: Center(child: content),
+                )
+              : Center(child: content);
+        },
       ),
     );
   }

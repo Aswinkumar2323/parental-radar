@@ -104,144 +104,154 @@ class _ParentDetailsFormState extends State<ParentDetailsForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF0090ff), Color(0xFF15D6A6), Color(0xFFF2F8FF)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: Center(
-          child: SingleChildScrollView(
-            child: Container(
-              padding: const EdgeInsets.all(24),
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.95),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 10,
-                    offset: Offset(0, 4),
-                  ),
-                ],
+      backgroundColor: const Color(0xFFE2E2E2),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Image.asset(
+                'assets/icon/Final logo-01.png',
+                height: 130,
               ),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 500),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Parent Form',
-                      style: TextStyle(
-                        fontFamily: 'NexaBold',
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF123a5b),
-                      ),
-                    ),
-                    const SizedBox(height: 30),
-                    _buildTextField('Full Name', _nameController),
-                    const SizedBox(height: 20),
-                    _buildTextField(
-                      'Phone Number',
-                      _phoneController,
-                      keyboardType: TextInputType.phone,
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'Date of Birth',
-                      style: TextStyle(fontFamily: 'NexaBold', fontSize: 14),
-                    ),
-                    const SizedBox(height: 8),
-                    GestureDetector(
-                      onTap: _pickDateOfBirth,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey.shade400),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              _selectedDOB != null
-                                  ? DateFormat('yyyy-MM-dd').format(_selectedDOB!)
-                                  : 'Select Date of Birth',
-                              style: const TextStyle(fontFamily: 'NexaBold', fontSize: 14),
-                            ),
-                            const Icon(Icons.calendar_today, size: 18),
-                          ],
-                        ),
-                      ),
-                    ),
-                    if (_calculatedAge != null) ...[
-                      const SizedBox(height: 20),
-                      Text(
-                        'Age: $_calculatedAge',
-                        style: const TextStyle(fontFamily: 'NexaBold', fontSize: 14),
-                      ),
-                    ],
-                    const SizedBox(height: 30),
-                    const Text(
-                      'Gender',
-                      style: TextStyle(fontFamily: 'NexaBold', fontSize: 14),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        _buildGenderOption('Male'),
-                        const SizedBox(width: 16),
-                        _buildGenderOption('Female'),
-                        const SizedBox(width: 16),
-                        _buildGenderOption('Prefer not to say'),
-                      ],
-                    ),
-                    const SizedBox(height: 40),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: _isSaving ? null : _saveDetails,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF5F40FB),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: _isSaving
-                            ? const CircularProgressIndicator(color: Colors.white)
-                            : const Text(
-                                'Save Details',
-                                style: TextStyle(
-                                  fontFamily: 'NexaBold',
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                      ),
+              const SizedBox(height: 20),
+              Container(
+                padding: const EdgeInsets.all(24),
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 10,
+                      offset: Offset(0, 4),
                     ),
                   ],
                 ),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Parent Form',
+                        style: TextStyle(
+                          fontFamily: 'NexaBold',
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF123a5b),
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      _buildTextField('Full Name', _nameController),
+                      const SizedBox(height: 20),
+                      _buildTextField(
+                        'Phone Number',
+                        _phoneController,
+                        keyboardType: TextInputType.phone,
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Date of Birth',
+                        style: TextStyle(fontFamily: 'NexaBold', fontSize: 14),
+                      ),
+                      const SizedBox(height: 8),
+                      GestureDetector(
+                        onTap: _pickDateOfBirth,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.grey.shade400),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                _selectedDOB != null
+                                    ? DateFormat('yyyy-MM-dd').format(_selectedDOB!)
+                                    : 'Select Date of Birth',
+                                style: const TextStyle(
+                                  fontFamily: 'NexaBold',
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const Icon(Icons.calendar_today, size: 18),
+                            ],
+                          ),
+                        ),
+                      ),
+                      if (_calculatedAge != null) ...[
+                        const SizedBox(height: 20),
+                        Text(
+                          'Age: $_calculatedAge',
+                          style: const TextStyle(fontFamily: 'NexaBold', fontSize: 14),
+                        ),
+                      ],
+                      const SizedBox(height: 30),
+                      const Text(
+                        'Gender',
+                        style: TextStyle(fontFamily: 'NexaBold', fontSize: 14),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          _buildGenderOption('Male'),
+                          const SizedBox(width: 16),
+                          _buildGenderOption('Female'),
+                          const SizedBox(width: 16),
+                          _buildGenderOption('Prefer not to say'),
+                        ],
+                      ),
+                      const SizedBox(height: 40),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: _isSaving ? null : _saveDetails,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF0090FF),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: _isSaving
+                              ? const CircularProgressIndicator(color: Colors.white)
+                              : const Text(
+                                  'Save Details',
+                                  style: TextStyle(
+                                    fontFamily: 'NexaBold',
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller,
-      {TextInputType keyboardType = TextInputType.text}) {
+  Widget _buildTextField(
+    String label,
+    TextEditingController controller, {
+    TextInputType keyboardType = TextInputType.text,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontFamily: 'NexaBold', fontSize: 14)),
+        Text(
+          label,
+          style: const TextStyle(fontFamily: 'NexaBold', fontSize: 14),
+        ),
         const SizedBox(height: 8),
         TextFormField(
           controller: controller,
@@ -257,7 +267,7 @@ class _ParentDetailsFormState extends State<ParentDetailsForm> {
             hintStyle: const TextStyle(fontFamily: 'NexaBold'),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             filled: true,
-            fillColor: Colors.grey[100],
+            fillColor: Colors.grey[200],
           ),
         ),
       ],

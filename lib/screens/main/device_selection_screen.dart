@@ -99,20 +99,29 @@ class _DeviceSelectionScreenState extends State<DeviceSelectionScreen> {
               child: QrImageView(data: username),
             ),
             const SizedBox(height: 12),
-            Text(username, style: const TextStyle(fontSize: 14, fontFamily: 'NexaBold')),
+            Text(
+              username,
+              style: const TextStyle(fontSize: 14, fontFamily: 'NexaBold'),
+            ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel', style: TextStyle(fontFamily: 'NexaBold')),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(fontFamily: 'NexaBold'),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
               _saveDeviceToFirestore(username);
             },
-            child: const Text('Confirm', style: TextStyle(fontFamily: 'NexaBold')),
+            child: const Text(
+              'Confirm',
+              style: TextStyle(fontFamily: 'NexaBold'),
+            ),
           ),
         ],
       ),
@@ -120,7 +129,8 @@ class _DeviceSelectionScreenState extends State<DeviceSelectionScreen> {
   }
 
   void _addDevice() {
-    final uniqueName = 'device_qer_${Random().nextInt(999999).toString().padLeft(6, '0')}';
+    final uniqueName =
+        'device_qer_${Random().nextInt(999999).toString().padLeft(6, '0')}';
     _showQRAndConfirm(uniqueName);
   }
 
@@ -148,18 +158,29 @@ class _DeviceSelectionScreenState extends State<DeviceSelectionScreen> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Delete Device', style: TextStyle(fontFamily: 'NexaBold')),
-        content: Text('Are you sure you want to remove "$username"?',
-            style: const TextStyle(fontFamily: 'NexaBold')),
+        title: const Text(
+          'Delete Device',
+          style: TextStyle(fontFamily: 'NexaBold'),
+        ),
+        content: Text(
+          'Are you sure you want to remove "$username"?',
+          style: const TextStyle(fontFamily: 'NexaBold'),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel', style: TextStyle(fontFamily: 'NexaBold')),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(fontFamily: 'NexaBold'),
+            ),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
-            child: const Text('Delete', style: TextStyle(fontFamily: 'NexaBold')),
+            child: const Text(
+              'Delete',
+              style: TextStyle(fontFamily: 'NexaBold'),
+            ),
           ),
         ],
       ),
@@ -177,102 +198,108 @@ class _DeviceSelectionScreenState extends State<DeviceSelectionScreen> {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
+      backgroundColor: const Color(0xFFE2E2E2),
       appBar: AppBar(
-        title: const Text('Connect Your Device', style: TextStyle(fontFamily: 'NexaBold')),
+        title: const Text(
+          'Connect Your Device',
+          style: TextStyle(fontFamily: 'NexaBold', color: Colors.black87),
+        ),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
         automaticallyImplyLeading: false,
+        iconTheme: const IconThemeData(color: Colors.black87),
       ),
-      body: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF0090ff), Color(0xFF15D6A6), Color(0xFFF2F8FF)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+      body: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: isMobile ? double.infinity : 600,
           ),
-        ),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: isMobile ? double.infinity : 600,
+          child: ListView(
+            padding: EdgeInsets.symmetric(
+              horizontal: isMobile ? 16 : 32,
+              vertical: 100,
             ),
-            child: ListView(
-              padding: EdgeInsets.symmetric(
-                horizontal: isMobile ? 16 : 32,
-                vertical: 100,
-              ),
-              children: [
-                const Text(
-                  'Connect your child’s device to get started',
-                  style: TextStyle(
-                    fontFamily: 'NexaBold',
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                  textAlign: TextAlign.center,
+            children: [
+              const Text(
+                'Connect your child’s device to get started',
+                style: TextStyle(
+                  fontFamily: 'NexaBold',
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
                 ),
-                const SizedBox(height: 20),
-                if (deviceId != null)
-                  Animate(
-                    effects: [FadeEffect(duration: 300.ms), SlideEffect()],
-                    child: Card(
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 12,
-                        ),
-                        leading: const Icon(Icons.devices, color: Colors.teal),
-                        title: const Text(
-                          'Linked Device',
-                          style: TextStyle(
-                            fontFamily: 'NexaBold',
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                        subtitle: Text(deviceId!, style: const TextStyle(fontFamily: 'NexaBold')),
-                        trailing: Wrap(
-                          spacing: 8,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () => _confirmDeleteDevice(deviceId!),
-                            ),
-                            const Icon(Icons.arrow_forward_ios, size: 16),
-                          ],
-                        ),
-                        onTap: _openDashboard,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              if (deviceId != null)
+                Animate(
+                  effects: [FadeEffect(duration: 300.ms), SlideEffect()],
+                  child: Card(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 12,
                       ),
+                      leading: const Icon(Icons.devices, color: Colors.teal),
+                      title: const Text(
+                        'Linked Device',
+                        style: TextStyle(
+                          fontFamily: 'NexaBold',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      subtitle: Text(
+                        deviceId!,
+                        style: const TextStyle(fontFamily: 'NexaBold'),
+                      ),
+                      trailing: Wrap(
+                        spacing: 8,
+                        children: [
+                          IconButton(
+                            icon:
+                                const Icon(Icons.delete, color: Colors.redAccent),
+                            onPressed: () => _confirmDeleteDevice(deviceId!),
+                          ),
+                          const Icon(Icons.arrow_forward_ios, size: 16),
+                        ],
+                      ),
+                      onTap: _openDashboard,
                     ),
                   ),
-                if (deviceId == null)
-                  Animate(
-                    effects: [FadeEffect(), ScaleEffect(delay: 100.ms)],
-                    child: Card(
-                      color: Colors.white.withOpacity(0.8),
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 16,
-                        ),
-                        leading: const Icon(Icons.link, color: Colors.green),
-                        title: const Text(
-                          'Add New Device',
-                          style: TextStyle(
-                            fontFamily: 'NexaBold',
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        onTap: _addDevice,
+                ),
+              if (deviceId == null)
+                Animate(
+                  effects: [FadeEffect(), ScaleEffect(delay: 100.ms)],
+                  child: Card(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 16,
                       ),
+                      leading: const Icon(Icons.link, color: Color(0xFF0090FF)),
+                      title: const Text(
+                        'Add New Device',
+                        style: TextStyle(
+                          fontFamily: 'NexaBold',
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      onTap: _addDevice,
                     ),
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
         ),
       ),

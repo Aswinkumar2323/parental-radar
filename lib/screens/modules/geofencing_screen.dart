@@ -7,6 +7,7 @@ import '../../apis/post.dart';
 import './web_map_picker.dart';
 import '../../utils/permissions.dart';
 import '../../decryption/parent_decryption.dart';
+import '../../widgets/breathing_loader.dart';
 
 class GeofencingScreen extends StatefulWidget {
   final String username;
@@ -64,7 +65,9 @@ class _GeofencingScreenState extends State<GeofencingScreen> {
       userId: widget.username,
     );
     if (result != null && result['data'] != null) {
-      setState(() => geofenceCmdData = Map<String, dynamic>.from(result['data']));
+      setState(
+        () => geofenceCmdData = Map<String, dynamic>.from(result['data']),
+      );
     }
   }
 
@@ -91,7 +94,10 @@ class _GeofencingScreenState extends State<GeofencingScreen> {
           children: [
             Icon(Icons.check_circle, color: Colors.white),
             SizedBox(width: 12),
-            Text("Geofence command set successfully", style: TextStyle(fontFamily: 'NexaBold')),
+            Text(
+              "Geofence command set successfully",
+              style: TextStyle(fontFamily: 'NexaBold'),
+            ),
           ],
         ),
         backgroundColor: Colors.green,
@@ -149,15 +155,16 @@ class _GeofencingScreenState extends State<GeofencingScreen> {
             decoration: BoxDecoration(
               color: isDark ? Colors.grey.shade900 : Colors.white,
               borderRadius: BorderRadius.circular(20),
-              boxShadow: isDark
-                  ? null
-                  : [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 4,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
+              boxShadow:
+                  isDark
+                      ? null
+                      : [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 4,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
             ),
             child: Text(
               'Geofencing',
@@ -189,192 +196,246 @@ class _GeofencingScreenState extends State<GeofencingScreen> {
           gradient: LinearGradient(
             begin: Alignment.bottomLeft,
             end: Alignment.topRight,
-            colors: isDark
-                ? [Colors.black, Colors.black, Colors.black]
-                : [Color(0xFF0090FF), Color(0xFF15D6A6), Color(0xFF123A5B)],
+            colors:
+                isDark
+                    ? [Colors.black, Colors.black, Colors.black]
+                    : [Color(0xFF0090FF), Color(0xFF15D6A6), Color(0xFF123A5B)],
           ),
         ),
-        child: isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : Padding(
-                padding: const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 16),
-                child: SingleChildScrollView(
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      return Column(
-                        children: [
-                          Wrap(
-                            spacing: isMobile ? 16 : 32,
-                            runSpacing: 16,
-                            alignment: WrapAlignment.spaceAround,
-                            children: [
-                              _buildDataCard(
-                                context: context,
-                                title: "📍 Current Geofence Command",
-                                icon: Icons.location_on_outlined,
-                                data: geofenceCmdData != null
-                                    ? {
-                                        "Latitude": geofenceCmdData!['latitude'],
-                                        "Longitude": geofenceCmdData!['longitude'],
-                                        "Radius": "${geofenceCmdData!['radius']} meters",
-                                        "Last Updated": geofenceCmdData!['updatedAt'] ?? "-",
-                                      }
-                                    : {"Status": "No command data"},
-                              ),
-                              _buildDataCard(
-                                context: context,
-                                title: "📡 Live Geofence Data",
-                                icon: FontAwesomeIcons.satelliteDish,
-                                data: geofenceData != null
-                                    ? {
-                                        "Status": geofenceData!['status'] ?? "Unknown",
-                                        "Latitude": geofenceData!['latitude'],
-                                        "Longitude": geofenceData!['longitude'],
-                                        "Last Update": geofenceData!['time'],
-                                      }
-                                    : {"Status": "No geofence data"},
-                                statusColor: geofenceData?['regionId'] == 'inside'
-                                    ? Colors.green
-                                    : Colors.red,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 24),
-                          Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: isDark ? Colors.grey.shade900 : Colors.white,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+        child:
+            isLoading
+                ? Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.white, Colors.white],
+                    ),
+                  ),
+                  child: const Center(child: BreathingLoader()),
+                )
+                : Padding(
+                  padding: const EdgeInsets.only(
+                    top: 100,
+                    left: 16,
+                    right: 16,
+                    bottom: 16,
+                  ),
+                  child: SingleChildScrollView(
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        return Column(
+                          children: [
+                            Wrap(
+                              spacing: isMobile ? 16 : 32,
+                              runSpacing: 16,
+                              alignment: WrapAlignment.spaceAround,
                               children: [
-                                Text(
-                                  "🛠️ Set New Geofence",
-                                  style: theme.textTheme.titleMedium?.copyWith(
-                                    fontFamily: 'NexaBold',
-                                    color: isDark
-                                        ? Colors.white
-                                        : theme.colorScheme.onSurface,
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                                ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                    minHeight: 200,
-                                    maxHeight: isMobile ? 300 : 400,
-                                    minWidth: double.infinity,
-                                  ),
-                                  child: Container(
-                                    clipBehavior: Clip.antiAlias,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(color: Colors.grey.shade300),
-                                    ),
-                                    child: WebMapPicker(
-                                      key: ValueKey(_selectedRadius),
-                                      onChanged: onMapChanged,
-                                      radius: _selectedRadius,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Slider(
-                                        value: _selectedRadius,
-                                        min: 10,
-                                        max: 2000,
-                                        divisions: 20,
-                                        label: "${_selectedRadius.toInt()}m",
-                                        onChanged: (val) {
-                                          setState(() {
-                                            _selectedRadius = val;
-                                            _radiusController.text = val.toInt().toString();
-                                            _radiusWarning = null;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    SizedBox(
-                                      width: 100,
-                                      child: TextField(
-                                        controller: _radiusController,
-                                        keyboardType: TextInputType.number,
-                                        decoration: const InputDecoration(
-                                          labelText: "Manual",
-                                          border: OutlineInputBorder(),
-                                          isDense: true,
-                                        ),
-                                        onChanged: (val) {
-                                          final parsed = double.tryParse(val);
-                                          if (parsed != null) {
-                                            if (parsed > 2000) {
-                                              setState(() => _radiusWarning = "Max 2000 meters.");
-                                            } else if (parsed >= 10) {
-                                              setState(() {
-                                                _selectedRadius = parsed;
-                                                _radiusWarning = null;
-                                              });
-                                            }
+                                _buildDataCard(
+                                  context: context,
+                                  title: "📍 Current Geofence Command",
+                                  icon: Icons.location_on_outlined,
+                                  data:
+                                      geofenceCmdData != null
+                                          ? {
+                                            "Latitude":
+                                                geofenceCmdData!['latitude'],
+                                            "Longitude":
+                                                geofenceCmdData!['longitude'],
+                                            "Radius":
+                                                "${geofenceCmdData!['radius']} meters",
+                                            "Last Updated":
+                                                geofenceCmdData!['updatedAt'] ??
+                                                "-",
                                           }
-                                        },
-                                      ),
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      "meters",
-                                      style: TextStyle(
-                                        color: isDark ? Colors.white : Colors.black,
-                                        fontSize: 12,
-                                        fontFamily: 'NexaBold',
-                                      ),
-                                    ),
-                                  ],
+                                          : {"Status": "No command data"},
                                 ),
-                                if (_radiusWarning != null)
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 6),
-                                    child: Text(
-                                      _radiusWarning!,
-                                      style: const TextStyle(color: Colors.red, fontFamily: 'NexaBold'),
-                                    ),
-                                  ),
-                                const SizedBox(height: 16),
-                                SizedBox(
-                                  width: double.infinity,
-                                  child: ElevatedButton.icon(
-                                    onPressed: waitTime > 0 || _radiusWarning != null
-                                        ? null
-                                        : sendGeofenceCommand,
-                                    icon: const Icon(Icons.send),
-                                    label: Text(
-                                      waitTime > 0
-                                          ? "Please wait: $waitTime s"
-                                          : "Send Geofence",
-                                      style: const TextStyle(fontFamily: 'NexaBold'),
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(vertical: 16),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      backgroundColor: theme.colorScheme.primary,
-                                      foregroundColor: theme.colorScheme.onPrimary,
-                                    ),
-                                  ),
+                                _buildDataCard(
+                                  context: context,
+                                  title: "📡 Live Geofence Data",
+                                  icon: FontAwesomeIcons.satelliteDish,
+                                  data:
+                                      geofenceData != null
+                                          ? {
+                                            "Status":
+                                                geofenceData!['status'] ??
+                                                "Unknown",
+                                            "Latitude":
+                                                geofenceData!['latitude'],
+                                            "Longitude":
+                                                geofenceData!['longitude'],
+                                            "Last Update":
+                                                geofenceData!['time'],
+                                          }
+                                          : {"Status": "No geofence data"},
+                                  statusColor:
+                                      geofenceData?['regionId'] == 'inside'
+                                          ? Colors.green
+                                          : Colors.red,
                                 ),
                               ],
                             ),
-                          ),
-                        ],
-                      );
-                    },
+                            const SizedBox(height: 24),
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color:
+                                    isDark
+                                        ? Colors.grey.shade900
+                                        : Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "🛠️ Set New Geofence",
+                                    style: theme.textTheme.titleMedium
+                                        ?.copyWith(
+                                          fontFamily: 'NexaBold',
+                                          color:
+                                              isDark
+                                                  ? Colors.white
+                                                  : theme.colorScheme.onSurface,
+                                        ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      minHeight: 200,
+                                      maxHeight: isMobile ? 300 : 400,
+                                      minWidth: double.infinity,
+                                    ),
+                                    child: Container(
+                                      clipBehavior: Clip.antiAlias,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(16),
+                                        border: Border.all(
+                                          color: Colors.grey.shade300,
+                                        ),
+                                      ),
+                                      child: WebMapPicker(
+                                        key: ValueKey(_selectedRadius),
+                                        onChanged: onMapChanged,
+                                        radius: _selectedRadius,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Slider(
+                                          value: _selectedRadius,
+                                          min: 10,
+                                          max: 2000,
+                                          divisions: 20,
+                                          label: "${_selectedRadius.toInt()}m",
+                                          onChanged: (val) {
+                                            setState(() {
+                                              _selectedRadius = val;
+                                              _radiusController.text =
+                                                  val.toInt().toString();
+                                              _radiusWarning = null;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      SizedBox(
+                                        width: 100,
+                                        child: TextField(
+                                          controller: _radiusController,
+                                          keyboardType: TextInputType.number,
+                                          decoration: const InputDecoration(
+                                            labelText: "Manual",
+                                            border: OutlineInputBorder(),
+                                            isDense: true,
+                                          ),
+                                          onChanged: (val) {
+                                            final parsed = double.tryParse(val);
+                                            if (parsed != null) {
+                                              if (parsed > 2000) {
+                                                setState(
+                                                  () =>
+                                                      _radiusWarning =
+                                                          "Max 2000 meters.",
+                                                );
+                                              } else if (parsed >= 10) {
+                                                setState(() {
+                                                  _selectedRadius = parsed;
+                                                  _radiusWarning = null;
+                                                });
+                                              }
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        "meters",
+                                        style: TextStyle(
+                                          color:
+                                              isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                          fontSize: 12,
+                                          fontFamily: 'NexaBold',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  if (_radiusWarning != null)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 6),
+                                      child: Text(
+                                        _radiusWarning!,
+                                        style: const TextStyle(
+                                          color: Colors.red,
+                                          fontFamily: 'NexaBold',
+                                        ),
+                                      ),
+                                    ),
+                                  const SizedBox(height: 16),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton.icon(
+                                      onPressed:
+                                          waitTime > 0 || _radiusWarning != null
+                                              ? null
+                                              : sendGeofenceCommand,
+                                      icon: const Icon(Icons.send),
+                                      label: Text(
+                                        waitTime > 0
+                                            ? "Please wait: $waitTime s"
+                                            : "Send Geofence",
+                                        style: const TextStyle(
+                                          fontFamily: 'NexaBold',
+                                        ),
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 16,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                        backgroundColor:
+                                            theme.colorScheme.primary,
+                                        foregroundColor:
+                                            theme.colorScheme.onPrimary,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
                   ),
                 ),
-              ),
       ),
     );
   }
@@ -430,9 +491,10 @@ class _GeofencingScreenState extends State<GeofencingScreen> {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontFamily: 'NexaBold',
-                            color: entry.key == "Status"
-                                ? statusColor
-                                : theme.textTheme.bodyMedium!.color,
+                            color:
+                                entry.key == "Status"
+                                    ? statusColor
+                                    : theme.textTheme.bodyMedium!.color,
                           ),
                         ),
                       ),

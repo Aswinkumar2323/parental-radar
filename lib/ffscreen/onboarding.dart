@@ -10,13 +10,15 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen>
     with TickerProviderStateMixin {
   late AnimationController _logoController;
-  late AnimationController _textController;
+  late AnimationController _titleController;
+  late AnimationController _boxController;
   late AnimationController _buttonController;
 
   late Animation<Offset> _logoOffset;
   late Animation<double> _logoOpacity;
 
-  late Animation<double> _textOpacity;
+  late Animation<double> _boxOpacity;
+  late Animation<Offset> _boxSlide;
 
   late Animation<Offset> _buttonOffset;
   late Animation<double> _buttonOpacity;
@@ -30,7 +32,12 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       vsync: this,
     );
 
-    _textController = AnimationController(
+    _titleController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+
+    _boxController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
@@ -47,10 +54,15 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
     _logoOpacity = Tween<double>(begin: 0, end: 1).animate(_logoController);
 
-    _textOpacity = Tween<double>(
+    _boxOpacity = Tween<double>(
       begin: 0,
       end: 1,
-    ).animate(CurvedAnimation(parent: _textController, curve: Curves.easeIn));
+    ).animate(CurvedAnimation(parent: _boxController, curve: Curves.easeIn));
+
+    _boxSlide = Tween<Offset>(
+      begin: const Offset(0, 0.2),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _boxController, curve: Curves.easeOut));
 
     _buttonOffset = Tween<Offset>(
       begin: const Offset(0, 0.5),
@@ -66,8 +78,10 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
   Future<void> _startAnimations() async {
     await _logoController.forward();
+    await Future.delayed(const Duration(milliseconds: 200));
+    await _titleController.forward();
     await Future.delayed(const Duration(milliseconds: 300));
-    await _textController.forward();
+    await _boxController.forward();
     await Future.delayed(const Duration(milliseconds: 200));
     await _buttonController.forward();
   }
@@ -75,7 +89,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   @override
   void dispose() {
     _logoController.dispose();
-    _textController.dispose();
+    _titleController.dispose();
+    _boxController.dispose();
     _buttonController.dispose();
     super.dispose();
   }
@@ -86,135 +101,126 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     final isWide = screenWidth > 600;
 
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF0090ff), Color(0xFF15D6A6), Color(0xFFF2F8FF)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 600),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 40),
-                  SlideTransition(
-                    position: _logoOffset,
-                    child: FadeTransition(
-                      opacity: _logoOpacity,
-                      child: Container(
-                        width: 150,
-                        height: 150,
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
+      backgroundColor: const Color(0xFFE2E2E2),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Logo without extra container or spacing
+                SlideTransition(
+                  position: _logoOffset,
+                  child: FadeTransition(
+                    opacity: _logoOpacity,
+                    child: Image.asset(
+                      'assets/icon/Final logo-01.png',
+                      width: 450,
+                      height: 450,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+
+                // Welcome Box directly after logo
+                SlideTransition(
+                  position: _boxSlide,
+                  child: FadeTransition(
+                    opacity: _boxOpacity,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF5F5F5),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 5,
+                        horizontal: 16,
+                      ),
+                      child: Column(
+                        children: const [
+                          Text(
+                            'Welcome!',
+                            style: TextStyle(
+                              fontFamily: 'NexaBold',
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
                             ),
-                          ],
-                        ),
-                        child: Image.asset(
-                          'assets/icon/app_icon.png',
-                          fit: BoxFit.contain,
-                        ),
+                          ),
+                          SizedBox(height: 12),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8),
+                            child: Text(
+                              'Thanks for joining! Access or create your account below, and get started on your journey!',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'NexaBold',
+                                fontSize: 16,
+                                color: Colors.black54,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  const SizedBox(height: 30),
-                  FadeTransition(
-                    opacity: _textOpacity,
-                    child: Column(
-                      children: const [
-                        Text(
-                          'Welcome!',
-                          style: TextStyle(
-                            fontFamily: 'NexaBold',
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                ),
+
+                const SizedBox(height: 30),
+
+                // Buttons
+                SlideTransition(
+                  position: _buttonOffset,
+                  child: FadeTransition(
+                    opacity: _buttonOpacity,
+                    child: isWide
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _buildPrimaryButton(
+                                context,
+                                "Get Started",
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/parent-auth');
+                                },
+                              ),
+                              const SizedBox(width: 20),
+                              _buildPrimaryButton(
+                                context,
+                                "My Account",
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/login');
+                                },
+                              ),
+                            ],
+                          )
+                        : Column(
+                            children: [
+                              _buildPrimaryButton(
+                                context,
+                                "Get Started",
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/parent-auth');
+                                },
+                              ),
+                              const SizedBox(height: 16),
+                              _buildPrimaryButton(
+                                context,
+                                "My Account",
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/login');
+                                },
+                              ),
+                            ],
                           ),
-                        ),
-                        SizedBox(height: 12),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8),
-                          child: Text(
-                            'Thanks for joining! Access or create your account below, and get started on your journey!',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: 'NexaBold',
-                              fontSize: 16,
-                              color: Colors.white70,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
-                  const SizedBox(height: 40),
-                  SlideTransition(
-                    position: _buttonOffset,
-                    child: FadeTransition(
-                      opacity: _buttonOpacity,
-                      child: isWide
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                _buildPrimaryButton(
-                                  context,
-                                  "Get Started",
-                                  onPressed: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      '/parent-auth',
-                                    );
-                                  },
-                                ),
-                                const SizedBox(width: 20),
-                                _buildSecondaryButton(
-                                  "My Account",
-                                  onPressed: () {
-                                    Navigator.pushNamed(context, '/login');
-                                  },
-                                ),
-                              ],
-                            )
-                          : Column(
-                              children: [
-                                _buildPrimaryButton(
-                                  context,
-                                  "Get Started",
-                                  onPressed: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      '/parent-auth',
-                                    );
-                                  },
-                                ),
-                                const SizedBox(height: 16),
-                                _buildSecondaryButton(
-                                  "My Account",
-                                  onPressed: () {
-                                    Navigator.pushNamed(context, '/login');
-                                  },
-                                ),
-                              ],
-                            ),
-                    ),
-                  ),
-                  const SizedBox(height: 60),
-                ],
-              ),
+                ),
+
+                const SizedBox(height: 60),
+              ],
             ),
           ),
         ),
@@ -233,45 +239,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          elevation: 3,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: ShaderMask(
-          shaderCallback: (bounds) => const LinearGradient(
-            colors: [
-              Color(0xFF0090ff),
-              Color(0xFF15D6A6),
-              Color(0xFF00F0FF),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-          blendMode: BlendMode.srcIn,
-          child: Text(
-            text,
-            style: const TextStyle(
-              fontFamily: 'NexaBold',
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.white, // masked by shader
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSecondaryButton(String text, {required VoidCallback onPressed}) {
-    return SizedBox(
-      width: 200,
-      height: 50,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF5F40FB),
+          backgroundColor: const Color(0xFF0090FF),
           elevation: 3,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),

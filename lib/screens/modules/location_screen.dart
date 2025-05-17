@@ -4,6 +4,7 @@ import '../../apis/get.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import './location_map_screen.dart';
 import '../../decryption/parent_decryption_array.dart';
+import '../../widgets/breathing_loader.dart';
 
 class LocationScreen extends StatefulWidget {
   final String username;
@@ -77,15 +78,16 @@ class _LocationScreenState extends State<LocationScreen> {
           decoration: BoxDecoration(
             color: isDark ? Colors.grey.shade900 : Colors.white,
             borderRadius: BorderRadius.circular(20),
-            boxShadow: isDark
-                ? null
-                : [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
+            boxShadow:
+                isDark
+                    ? null
+                    : [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
           ),
           child: Text(
             'GPS Location Tracking',
@@ -123,51 +125,58 @@ class _LocationScreenState extends State<LocationScreen> {
       ),
       body: Container(
         decoration: BoxDecoration(
-          gradient: isDark
-              ? const LinearGradient(colors: [Colors.black, Colors.black])
-              : const LinearGradient(
-                  begin: Alignment.bottomLeft,
-                  end: Alignment.topRight,
-                  stops: [0.0, 0.5, 1.0],
-                  colors: [
-                    Color(0xFF0090FF),
-                    Color(0xFF15D6A6),
-                    Color(0xFF123A5B),
-                  ],
-                ),
+          gradient:
+              isDark
+                  ? const LinearGradient(colors: [Colors.black, Colors.black])
+                  : const LinearGradient(
+                    begin: Alignment.bottomLeft,
+                    end: Alignment.topRight,
+                    stops: [0.0, 0.5, 1.0],
+                    colors: [
+                      Color(0xFF0090FF),
+                      Color(0xFF15D6A6),
+                      Color(0xFF123A5B),
+                    ],
+                  ),
         ),
-        child: _isLoading
-            ? const Center(
-                child: CircularProgressIndicator(color: Colors.white),
-              )
-            : latest == null
-                ? const Center(
-                    child: Text(
-                      'No location data available',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'NexaBold',
-                      ),
-                    ),
-                  )
-                : SingleChildScrollView(
-                    padding: const EdgeInsets.only(top: 60, bottom: 30),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildLatestCard(
-                          latest['data'],
-                          latest['timestamp'],
-                          isDark,
-                        ).animate().fade(duration: 500.ms).moveY(),
-                        const SizedBox(height: 16),
-                        _buildHistoryList(history, isDark)
-                            .animate()
-                            .fade(duration: 500.ms)
-                            .moveY(delay: 200.ms),
-                      ],
+        child:
+            _isLoading
+                ? Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.white, Colors.white],
                     ),
                   ),
+                  child: const Center(child: BreathingLoader()),
+                )
+                : latest == null
+                ? const Center(
+                  child: Text(
+                    'No location data available',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'NexaBold',
+                    ),
+                  ),
+                )
+                : SingleChildScrollView(
+                  padding: const EdgeInsets.only(top: 100, bottom: 30),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildLatestCard(
+                        latest['data'],
+                        latest['timestamp'],
+                        isDark,
+                      ).animate().fade(duration: 500.ms).moveY(),
+                      const SizedBox(height: 16),
+                      _buildHistoryList(
+                        history,
+                        isDark,
+                      ).animate().fade(duration: 500.ms).moveY(delay: 200.ms),
+                    ],
+                  ),
+                ),
       ),
     );
   }
@@ -239,7 +248,8 @@ class _LocationScreenState extends State<LocationScreen> {
             fontSize: 16,
             fontWeight: FontWeight.bold,
             fontFamily: 'NexaBold',
-            color: isDark ? Colors.white : Theme.of(context).colorScheme.primary,
+            color:
+                isDark ? Colors.white : Theme.of(context).colorScheme.primary,
           ),
         ),
       ],

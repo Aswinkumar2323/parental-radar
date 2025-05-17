@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../apis/get.dart';
 import '../../apis/post.dart';
 import '../../decryption/parent_decryption.dart';
+import '../../widgets/breathing_loader.dart';
 
 class BlockedAppsScreen extends StatefulWidget {
   final String username;
@@ -58,10 +59,19 @@ class _BlockedAppsScreenState extends State<BlockedAppsScreen> {
   Future<void> loadAll() async {
     setState(() => isLoading = true);
     try {
-      final data = await fetchModuleData(module: 'iapp', userId: widget.username);
-      final installedResult = await ParentDecryption.decrypt(data, widget.username);
+      final data = await fetchModuleData(
+        module: 'iapp',
+        userId: widget.username,
+      );
+      final installedResult = await ParentDecryption.decrypt(
+        data,
+        widget.username,
+      );
 
-      final blockedResult = await fetchModuleData(module: 'bapp', userId: widget.username);
+      final blockedResult = await fetchModuleData(
+        module: 'bapp',
+        userId: widget.username,
+      );
 
       List<Map<String, String>> fetchedInstalled = [];
       Map<String, DateTime> fetchedBlocked = {};
@@ -69,12 +79,13 @@ class _BlockedAppsScreenState extends State<BlockedAppsScreen> {
       if (installedResult != null &&
           installedResult['data']?['InstalledApps'] is List) {
         final appsList = installedResult['data']['InstalledApps'] as List;
-        fetchedInstalled = appsList.map<Map<String, String>>((e) {
-          return {
-            'name': e['name'] ?? 'Unknown',
-            'package': e['package'] ?? '',
-          };
-        }).toList();
+        fetchedInstalled =
+            appsList.map<Map<String, String>>((e) {
+              return {
+                'name': e['name'] ?? 'Unknown',
+                'package': e['package'] ?? '',
+              };
+            }).toList();
       }
 
       final blockedList = blockedResult?['data']?['blockedApps'];
@@ -104,12 +115,15 @@ class _BlockedAppsScreenState extends State<BlockedAppsScreen> {
 
   Future<void> updateBlockedAppsToBackend(Map<String, DateTime> newMap) async {
     final data = {
-      'blockedApps': newMap.entries
-          .map((e) => {
-                'app': e.key,
-                'blocked_until': e.value.toUtc().toIso8601String(),
-              })
-          .toList(),
+      'blockedApps':
+          newMap.entries
+              .map(
+                (e) => {
+                  'app': e.key,
+                  'blocked_until': e.value.toUtc().toIso8601String(),
+                },
+              )
+              .toList(),
     };
     await sendModuleData(module: 'bapp', data: data, userId: widget.username);
   }
@@ -119,45 +133,67 @@ class _BlockedAppsScreenState extends State<BlockedAppsScreen> {
 
     final confirmed = await showDialog<dynamic>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(isCurrentlyBlocked ? 'Unblock App?' : 'Block App?',
-            style: TextStyle(fontFamily: 'NexaBold')),
-        content: Text(
-          isCurrentlyBlocked
-              ? 'Are you sure you want to unblock this app?'
-              : 'Select duration to block this app:',
-          style: TextStyle(fontFamily: 'NexaBold'),
-        ),
-        actions: isCurrentlyBlocked
-            ? [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: Text('Cancel', style: TextStyle(fontFamily: 'NexaBold')),
-                ),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  child: Text('Unblock', style: TextStyle(fontFamily: 'NexaBold')),
-                ),
-              ]
-            : [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: Text('Cancel', style: TextStyle(fontFamily: 'NexaBold')),
-                ),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(context, 15),
-                  child: Text('15 mins', style: TextStyle(fontFamily: 'NexaBold')),
-                ),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(context, 30),
-                  child: Text('30 mins', style: TextStyle(fontFamily: 'NexaBold')),
-                ),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(context, 60),
-                  child: Text('1 hour', style: TextStyle(fontFamily: 'NexaBold')),
-                ),
-              ],
-      ),
+      builder:
+          (context) => AlertDialog(
+            title: Text(
+              isCurrentlyBlocked ? 'Unblock App?' : 'Block App?',
+              style: TextStyle(fontFamily: 'NexaBold'),
+            ),
+            content: Text(
+              isCurrentlyBlocked
+                  ? 'Are you sure you want to unblock this app?'
+                  : 'Select duration to block this app:',
+              style: TextStyle(fontFamily: 'NexaBold'),
+            ),
+            actions:
+                isCurrentlyBlocked
+                    ? [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(fontFamily: 'NexaBold'),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: Text(
+                          'Unblock',
+                          style: TextStyle(fontFamily: 'NexaBold'),
+                        ),
+                      ),
+                    ]
+                    : [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(fontFamily: 'NexaBold'),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(context, 15),
+                        child: Text(
+                          '15 mins',
+                          style: TextStyle(fontFamily: 'NexaBold'),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(context, 30),
+                        child: Text(
+                          '30 mins',
+                          style: TextStyle(fontFamily: 'NexaBold'),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(context, 60),
+                        child: Text(
+                          '1 hour',
+                          style: TextStyle(fontFamily: 'NexaBold'),
+                        ),
+                      ),
+                    ],
+          ),
     );
 
     if (confirmed == null || (confirmed is bool && confirmed == false)) return;
@@ -168,8 +204,9 @@ class _BlockedAppsScreenState extends State<BlockedAppsScreen> {
     if (isCurrentlyBlocked) {
       newBlocked.remove(packageName);
     } else {
-      newBlocked[packageName] =
-          DateTime.now().add(Duration(minutes: confirmed as int));
+      newBlocked[packageName] = DateTime.now().add(
+        Duration(minutes: confirmed as int),
+      );
     }
 
     setState(() {
@@ -189,17 +226,23 @@ class _BlockedAppsScreenState extends State<BlockedAppsScreen> {
         setState(() => _isProcessing = false);
         showDialog(
           context: context,
-          builder: (context) => AlertDialog(
-            title: Text("Update Complete", style: TextStyle(fontFamily: 'NexaBold')),
-            content: Text('$_pendingActionMessage successfully.',
-                style: TextStyle(fontFamily: 'NexaBold')),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text("OK", style: TextStyle(fontFamily: 'NexaBold')),
+          builder:
+              (context) => AlertDialog(
+                title: Text(
+                  "Update Complete",
+                  style: TextStyle(fontFamily: 'NexaBold'),
+                ),
+                content: Text(
+                  '$_pendingActionMessage successfully.',
+                  style: TextStyle(fontFamily: 'NexaBold'),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text("OK", style: TextStyle(fontFamily: 'NexaBold')),
+                  ),
+                ],
               ),
-            ],
-          ),
         );
       }
     });
@@ -230,16 +273,18 @@ class _BlockedAppsScreenState extends State<BlockedAppsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final theme = Theme.of(context);
 
-    final filteredApps = installedApps.where((app) {
-      final name = app['name']?.toLowerCase() ?? '';
-      final isBlocked = blockedApps.containsKey(app['package']);
-      return name.contains(_searchQuery) &&
-          (!_showBlockedOnly || isBlocked);
-    }).toList();
+    final filteredApps =
+        installedApps.where((app) {
+          final name = app['name']?.toLowerCase() ?? '';
+          final isBlocked = blockedApps.containsKey(app['package']);
+          return name.contains(_searchQuery) &&
+              (!_showBlockedOnly || isBlocked);
+        }).toList();
 
-    final blockedOnlyApps = installedApps.where(
-      (app) => blockedApps.containsKey(app['package']),
-    ).toList();
+    final blockedOnlyApps =
+        installedApps
+            .where((app) => blockedApps.containsKey(app['package']))
+            .toList();
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -277,217 +322,278 @@ class _BlockedAppsScreenState extends State<BlockedAppsScreen> {
           gradient: LinearGradient(
             begin: Alignment.bottomLeft,
             end: Alignment.topRight,
-            colors: isDark
-                ? [Colors.black, Colors.black, Colors.black]
-                : [Color(0xFF0090FF), Color(0xFF15D6A6), Color(0xFF123A5B)],
+            colors:
+                isDark
+                    ? [Colors.black, Colors.black, Colors.black]
+                    : [Color(0xFF0090FF), Color(0xFF15D6A6), Color(0xFF123A5B)],
           ),
         ),
-        child: isLoading
-            ? Center(child: CircularProgressIndicator(color: Colors.white))
-            : SingleChildScrollView(
-                padding: const EdgeInsets.only(top: kToolbarHeight + 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (_isProcessing)
-                      MaterialBanner(
-                        backgroundColor: isDark
-                            ? Colors.amber.shade800
-                            : Colors.yellow.shade100,
-                        content: Text(
-                          '$_pendingActionMessage will reflect in target device within $_remainingSeconds seconds...',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'NexaBold',
-                          ),
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () =>
-                                setState(() => _isProcessing = false),
-                            child:
-                                Text('Dismiss', style: TextStyle(fontFamily: 'NexaBold')),
-                          ),
-                        ],
-                      ),
-                    if (blockedOnlyApps.isNotEmpty) ...[
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
-                        child: Text(
-                          'List of All Blocked Apps',
-                          style: theme.textTheme.titleMedium!.copyWith(
-                            color: Colors.white,
-                            fontFamily: 'NexaBold',
-                          ),
-                        ),
-                      ),
-                      Container(
-                        height: 100,
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: blockedOnlyApps.length,
-                          separatorBuilder: (_, __) => SizedBox(width: 12),
-                          itemBuilder: (context, index) {
-                            final app = blockedOnlyApps[index];
-                            final name = app['name'] ?? 'Unknown';
-                            final icon = getIconFromAppName(name);
-                            return Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                CircleAvatar(
-                                  backgroundColor: Colors.white,
-                                  child: FaIcon(icon, color: Colors.red, size: 20),
-                                ),
-                                SizedBox(height: 4),
-                                SizedBox(
-                                  width: 70,
-                                  child: Text(
-                                    name,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontFamily: 'NexaBold',
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      child: TextField(
-                        controller: _searchController,
-                        style: TextStyle(color: Colors.white, fontFamily: 'NexaBold'),
-                        decoration: InputDecoration(
-                          hintText: 'Search apps...',
-                          hintStyle: TextStyle(color: Colors.white70, fontFamily: 'NexaBold'),
-                          prefixIcon: Icon(Icons.search, color: Colors.white),
-                          filled: true,
-                          fillColor: Colors.white24,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                      ),
+        child:
+            isLoading
+                ? Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.white, Colors.white],
                     ),
-                    SwitchListTile(
-                      title: Text('Show only blocked apps',
-                          style: TextStyle(color: Colors.white, fontFamily: 'NexaBold')),
-                      value: _showBlockedOnly,
-                      onChanged: (value) =>
-                          setState(() => _showBlockedOnly = value),
-                    ),
-                    if (filteredApps.isEmpty)
-                      Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Text('No matching apps found.',
-                            style:
-                                TextStyle(color: Colors.white, fontFamily: 'NexaBold')),
-                      ),
-                    ...filteredApps.map((app) {
-                      final name = app['name'] ?? 'Unknown';
-                      final package = app['package'] ?? '';
-                      final icon = getIconFromAppName(name);
-                      final isBlocked = blockedApps.containsKey(package);
-                      final blockedUntil = blockedApps[package];
-                      final timeLeft = blockedUntil != null
-                          ? getRemainingTime(blockedUntil)
-                          : null;
-
-                      return Container(
-                        margin:
-                            const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: isDark ? Colors.grey[850] : Colors.grey[100],
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black26,
-                              blurRadius: 4,
-                              offset: Offset(0, 2),
-                            )
-                          ],
-                        ),
-                        child: Card(
-                          elevation: 0,
-                          color: Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Center(child: BreathingLoader()),
+                )
+                : SingleChildScrollView(
+                  padding: const EdgeInsets.only(top: kToolbarHeight + 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (_isProcessing)
+                        MaterialBanner(
+                          backgroundColor:
+                              isDark
+                                  ? Colors.amber.shade800
+                                  : Colors.yellow.shade100,
+                          content: Text(
+                            '$_pendingActionMessage will reflect in target device within $_remainingSeconds seconds...',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'NexaBold',
+                            ),
                           ),
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 12, horizontal: 16),
-                            leading: CircleAvatar(
-                              backgroundColor: isBlocked
-                                  ? Colors.redAccent
-                                  : Colors.tealAccent.shade700,
-                              child: FaIcon(
-                                icon,
-                                color: Colors.white,
-                                size: 20,
+                          actions: [
+                            TextButton(
+                              onPressed:
+                                  () => setState(() => _isProcessing = false),
+                              child: Text(
+                                'Dismiss',
+                                style: TextStyle(fontFamily: 'NexaBold'),
                               ),
                             ),
-                            title: Text(name,
-                                style: TextStyle(
-                                    color: isDark ? Colors.white : Colors.black,
-                                    fontFamily: 'NexaBold')),
-                            subtitle: Text(package,
-                                style: TextStyle(
-                                    color:
-                                        isDark ? Colors.white70 : Colors.black54,
-                                    fontFamily: 'NexaBold')),
-                            trailing: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: _isProcessing
-                                      ? null
-                                      : () => toggleBlock(package),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: isBlocked
-                                        ? Colors.grey[800]
-                                        : Colors.redAccent,
-                                  ),
-                                  child: Text(
-                                    isBlocked ? 'Unblock' : 'Block',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'NexaBold',
+                          ],
+                        ),
+                      if (blockedOnlyApps.isNotEmpty) ...[
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
+                          child: Text(
+                            'List of All Blocked Apps',
+                            style: theme.textTheme.titleMedium!.copyWith(
+                              color: Colors.white,
+                              fontFamily: 'NexaBold',
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: 100,
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: blockedOnlyApps.length,
+                            separatorBuilder: (_, __) => SizedBox(width: 12),
+                            itemBuilder: (context, index) {
+                              final app = blockedOnlyApps[index];
+                              final name = app['name'] ?? 'Unknown';
+                              final icon = getIconFromAppName(name);
+                              return Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  CircleAvatar(
+                                    backgroundColor: Colors.white,
+                                    child: FaIcon(
+                                      icon,
+                                      color: Colors.red,
+                                      size: 20,
                                     ),
                                   ),
-                                ),
-                                if (isBlocked && timeLeft != null)
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 4.0),
+                                  SizedBox(height: 4),
+                                  SizedBox(
+                                    width: 70,
                                     child: Text(
-                                      timeLeft,
+                                      name,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        fontSize: 12,
-                                        color: isDark
-                                            ? Colors.orangeAccent
-                                            : Colors.red.shade700,
+                                        color: Colors.white,
                                         fontFamily: 'NexaBold',
                                       ),
                                     ),
                                   ),
-                              ],
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        child: TextField(
+                          controller: _searchController,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: 'NexaBold',
+                          ),
+                          decoration: InputDecoration(
+                            hintText: 'Search apps...',
+                            hintStyle: TextStyle(
+                              color: Colors.white70,
+                              fontFamily: 'NexaBold',
+                            ),
+                            prefixIcon: Icon(Icons.search, color: Colors.white),
+                            filled: true,
+                            fillColor: Colors.white24,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
                             ),
                           ),
                         ),
-                      );
-                    }).toList(),
-                  ],
+                      ),
+                      SwitchListTile(
+                        title: Text(
+                          'Show only blocked apps',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: 'NexaBold',
+                          ),
+                        ),
+                        value: _showBlockedOnly,
+                        onChanged:
+                            (value) => setState(() => _showBlockedOnly = value),
+                      ),
+                      if (filteredApps.isEmpty)
+                        Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Text(
+                            'No matching apps found.',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'NexaBold',
+                            ),
+                          ),
+                        ),
+                      ...filteredApps.map((app) {
+                        final name = app['name'] ?? 'Unknown';
+                        final package = app['package'] ?? '';
+                        final icon = getIconFromAppName(name);
+                        final isBlocked = blockedApps.containsKey(package);
+                        final blockedUntil = blockedApps[package];
+                        final timeLeft =
+                            blockedUntil != null
+                                ? getRemainingTime(blockedUntil)
+                                : null;
+
+                        return Container(
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isDark ? Colors.grey[850] : Colors.grey[100],
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 4,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Card(
+                            elevation: 0,
+                            color: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.symmetric(
+                                vertical: 12,
+                                horizontal: 16,
+                              ),
+                              leading: CircleAvatar(
+                                backgroundColor:
+                                    isBlocked
+                                        ? Colors.redAccent
+                                        : Colors.tealAccent.shade700,
+                                child: FaIcon(
+                                  icon,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
+                              title: Text(
+                                name,
+                                style: TextStyle(
+                                  color: isDark ? Colors.white : Colors.black,
+                                  fontFamily: 'NexaBold',
+                                ),
+                              ),
+                              subtitle: Text(
+                                package,
+                                style: TextStyle(
+                                  color:
+                                      isDark ? Colors.white70 : Colors.black54,
+                                  fontFamily: 'NexaBold',
+                                ),
+                              ),
+                              trailing: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment:
+                                    CrossAxisAlignment
+                                        .end, // Align items to the end
+                                mainAxisSize:
+                                    MainAxisSize
+                                        .min, // Take minimal vertical space
+                                children: [
+                                  ElevatedButton(
+                                    onPressed:
+                                        _isProcessing
+                                            ? null
+                                            : () => toggleBlock(package),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          isBlocked
+                                              ? Colors.grey[800]
+                                              : Colors.redAccent,
+                                    ),
+                                    child: Text(
+                                      isBlocked ? 'Unblock' : 'Block',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'NexaBold',
+                                      ),
+                                    ),
+                                  ),
+                                  if (isBlocked && timeLeft != null)
+                                    SizedBox(
+                                      // Add a SizedBox to constrain the height
+                                      height:
+                                          16.0, // Adjust this value as needed
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: 4.0,
+                                        ),
+                                        child: Text(
+                                          timeLeft,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color:
+                                                isDark
+                                                    ? Colors.orangeAccent
+                                                    : Colors.red.shade700,
+                                            fontFamily: 'NexaBold',
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ],
+                  ),
                 ),
-              ),
       ),
     );
   }

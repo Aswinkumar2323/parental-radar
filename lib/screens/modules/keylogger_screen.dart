@@ -3,6 +3,7 @@ import '../../apis/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:collection/collection.dart';
+import '../../widgets/breathing_loader.dart';
 
 class KeyloggerScreen extends StatefulWidget {
   final String username;
@@ -48,7 +49,9 @@ class _KeyloggerScreenState extends State<KeyloggerScreen> {
     });
   }
 
-  Map<String, List<String>> groupMessagesByApp(List<Map<String, dynamic>> data) {
+  Map<String, List<String>> groupMessagesByApp(
+    List<Map<String, dynamic>> data,
+  ) {
     final grouped = <String, List<String>>{};
     for (var item in data) {
       final app = item['app'] as String;
@@ -60,16 +63,13 @@ class _KeyloggerScreenState extends State<KeyloggerScreen> {
 
   Icon _getAppIcon(String app) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Icon(
-      switch (app.toLowerCase()) {
-        'whatsapp' => FontAwesomeIcons.whatsapp,
-        'instagram' => FontAwesomeIcons.instagram,
-        'telegram' => FontAwesomeIcons.telegram,
-        'facebook' => FontAwesomeIcons.facebook,
-        _ => Icons.smartphone,
-      },
-      color: isDark ? Colors.white : Colors.black,
-    );
+    return Icon(switch (app.toLowerCase()) {
+      'whatsapp' => FontAwesomeIcons.whatsapp,
+      'instagram' => FontAwesomeIcons.instagram,
+      'telegram' => FontAwesomeIcons.telegram,
+      'facebook' => FontAwesomeIcons.facebook,
+      _ => Icons.smartphone,
+    }, color: isDark ? Colors.white : Colors.black);
   }
 
   Widget _summaryCard({
@@ -98,13 +98,15 @@ class _KeyloggerScreenState extends State<KeyloggerScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title,
-                    style: const TextStyle(
-                      fontFamily: 'NexaBold',
-                      color: Colors.black87,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    )),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontFamily: 'NexaBold',
+                    color: Colors.black87,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
@@ -169,24 +171,30 @@ class _KeyloggerScreenState extends State<KeyloggerScreen> {
       ),
       body: Container(
         decoration: BoxDecoration(
-          gradient: isDark
-              ? const LinearGradient(colors: [Colors.black, Colors.black])
-              : const LinearGradient(
-                  begin: Alignment.bottomLeft,
-                  end: Alignment.topRight,
-                  colors: [
-                    Color(0xFF0090FF),
-                    Color(0xFF15D6A6),
-                    Color(0xFF123A5B),
-                  ],
-                ),
+          gradient:
+              isDark
+                  ? const LinearGradient(colors: [Colors.black, Colors.black])
+                  : const LinearGradient(
+                    begin: Alignment.bottomLeft,
+                    end: Alignment.topRight,
+                    colors: [
+                      Color(0xFF0090FF),
+                      Color(0xFF15D6A6),
+                      Color(0xFF123A5B),
+                    ],
+                  ),
         ),
         child: FutureBuilder<List<Map<String, dynamic>>>(
           future: _futureData,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(color: Colors.white),
+              return Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.white, Colors.white],
+                  ),
+                ),
+                child: const Center(child: BreathingLoader()),
               );
             } else if (snapshot.hasError ||
                 snapshot.data == null ||
@@ -194,23 +202,27 @@ class _KeyloggerScreenState extends State<KeyloggerScreen> {
               return const Center(
                 child: Text(
                   "No keylogger data available",
-                  style: TextStyle(
-                    fontFamily: 'NexaBold',
-                    color: Colors.white,
-                  ),
+                  style: TextStyle(fontFamily: 'NexaBold', color: Colors.white),
                 ),
               );
             }
 
             final groupedData = groupMessagesByApp(snapshot.data!);
-            final todayKeystrokes = groupedData.values
-                .fold<int>(0, (sum, list) => sum + list.length);
+            final todayKeystrokes = groupedData.values.fold<int>(
+              0,
+              (sum, list) => sum + list.length,
+            );
             final highestApp = groupedData.entries.reduce(
               (a, b) => a.value.length > b.value.length ? a : b,
             );
 
             return SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(16, kToolbarHeight + 18, 16, 18),
+              padding: const EdgeInsets.fromLTRB(
+                16,
+                kToolbarHeight + 18,
+                16,
+                18,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -240,7 +252,7 @@ class _KeyloggerScreenState extends State<KeyloggerScreen> {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         if (!isDark)
-                          const BoxShadow(color: Colors.black26, blurRadius: 5)
+                          const BoxShadow(color: Colors.black26, blurRadius: 5),
                       ],
                     ),
                     child: Row(
@@ -267,17 +279,20 @@ class _KeyloggerScreenState extends State<KeyloggerScreen> {
                               color: Colors.black54,
                             ),
                           ),
-                          items: groupedData.keys
-                              .map((app) => DropdownMenuItem<String>(
-                                    value: app,
-                                    child: Text(
-                                      app,
-                                      style: const TextStyle(
-                                        fontFamily: 'NexaBold',
+                          items:
+                              groupedData.keys
+                                  .map(
+                                    (app) => DropdownMenuItem<String>(
+                                      value: app,
+                                      child: Text(
+                                        app,
+                                        style: const TextStyle(
+                                          fontFamily: 'NexaBold',
+                                        ),
                                       ),
                                     ),
-                                  ))
-                              .toList(),
+                                  )
+                                  .toList(),
                           onChanged: (value) {
                             setState(() {
                               selectedApp = value ?? '';
@@ -301,7 +316,10 @@ class _KeyloggerScreenState extends State<KeyloggerScreen> {
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           if (!isDark)
-                            const BoxShadow(color: Colors.black26, blurRadius: 4)
+                            const BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 4,
+                            ),
                         ],
                       ),
                       child: Column(
@@ -324,18 +342,21 @@ class _KeyloggerScreenState extends State<KeyloggerScreen> {
                           const SizedBox(height: 6),
                           ...entry.value.mapIndexed((i, msg) {
                             return ListTile(
-                              contentPadding:
-                                  const EdgeInsets.symmetric(horizontal: 4),
-                              leading: const Icon(Icons.keyboard,
-                                  color: Colors.black87),
-                              title: Text(
-                                msg,
-                                style: const TextStyle(
-                                  fontFamily: 'NexaBold',
-                                  color: Colors.black87,
-                                ),
-                              ),
-                            )
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                  ),
+                                  leading: const Icon(
+                                    Icons.keyboard,
+                                    color: Colors.black87,
+                                  ),
+                                  title: Text(
+                                    msg,
+                                    style: const TextStyle(
+                                      fontFamily: 'NexaBold',
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                )
                                 .animate()
                                 .fadeIn(duration: 300.ms, delay: (i * 30).ms)
                                 .slideX(begin: 0.05);
@@ -353,8 +374,7 @@ class _KeyloggerScreenState extends State<KeyloggerScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: refresh,
         backgroundColor: isDark ? Colors.grey[850] : Colors.white,
-        child:
-            Icon(Icons.refresh, color: isDark ? Colors.white : Colors.black),
+        child: Icon(Icons.refresh, color: isDark ? Colors.white : Colors.black),
       ),
     );
   }
