@@ -131,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
-                          fontFamily: 'Righteous',
+                          fontFamily: 'NexaBold',
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -140,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.grey,
-                          fontFamily: 'Righteous',
+                          fontFamily: 'NexaBold',
                         ),
                       ),
                       const SizedBox(height: 20),

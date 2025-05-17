@@ -152,7 +152,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                             'Thanks for joining! Access or create your account below, and get started on your journey!',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontFamily: 'Righteous',
+                              fontFamily: 'NexaBold',
                               fontSize: 16,
                               color: Colors.white70,
                             ),
